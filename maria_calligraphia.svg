@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <defs>
+    <style>
+      /* 
+        NOTE: To use the Calligraphia One font, you need to:
+        1. Download the font from one of these sources:
+           - https://www.wfonts.com/font/calligraphia-one
+           - https://fontzone.net/font-details/calligraphia-one
+           - https://fontsgeek.com/fonts/Calligraphia-One-Regular
+           - https://legionfonts.com/fonts/calligraphia-one
+        
+        2. Convert the TTF file to base64 using:
+           base64 -w 0 "ofont.ru_Calligraphia One.ttf" > calligraphia_base64.txt
+        
+        3. Replace the @font-face src below with:
+           src: url('data:font/ttf;charset=utf-8;base64,YOUR_BASE64_STRING_HERE') format('truetype');
+      */
+      
+      @font-face {
+        font-family: 'Calligraphia One';
+        /* Uncomment and use the line below after converting your TTF to base64 */
+        /* src: url('data:font/ttf;charset=utf-8;base64,AAEAAAALAIAAAwAwT1MvMg8SBPQAAAC8AAAAYGNtYXABVgCsAAABHAAAAExnYXNwAAAAEAAAAWgAAAAIZ2x5Zg...') format('truetype'); */
+        /* For now, using fallback fonts */
+        src: local('Calligraphia One'), local('serif');
+      }
+      
+      .maria-text {
+        font-family: 'Calligraphia One', 'Cinzel Decorative', 'Georgia', serif;
+        font-size: 72px;
+        font-weight: 700;
+        fill: #E389B2;
+        text-anchor: middle;
+        letter-spacing: 2px;
+      }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="200" fill="#ffffff"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="50" cy="50" r="8" fill="#E389B2" opacity="0.3"/>
+  <circle cx="350" cy="150" r="8" fill="#E389B2" opacity="0.3"/>
+  
+  <!-- Main text -->
+  <text x="200" y="120" class="maria-text">Мария</text>
+  
+  <!-- Decorative line -->
+  <line x1="80" y1="145" x2="320" y2="145" stroke="#E389B2" stroke-width="1" opacity="0.5"/>
+</svg>

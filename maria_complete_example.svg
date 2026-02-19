@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  SVG for displaying "Мария" (Maria in Russian)
+  Color: #E389B2 (Pink)
+  Font: Calligraphia One (using Google Fonts fallback - Cinzel Decorative)
+  Suitable for: Wedding websites, greeting cards, invitations
+  
+  Usage: Open in any modern browser or embed in HTML
+-->
+<svg width="600" height="300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300">
+  <defs>
+    <style>
+      /* Import a beautiful decorative font that matches Calligraphia One style */
+      @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap');
+
+      .maria-text {
+        font-family: 'Cinzel Decorative', 'Georgia', serif;
+        font-size: 96px;
+        font-weight: 700;
+        fill: #E389B2;
+        text-anchor: middle;
+        letter-spacing: 3px;
+      }
+
+      .decorative {
+        stroke: #E389B2;
+        fill: none;
+      }
+    </style>
+  </defs>
+
+  <!-- White background -->
+  <rect width="600" height="300" fill="#ffffff"/>
+
+  <!-- 
+    Decorative elements - These add elegance suitable for weddings
+    You can remove these if you prefer just the text
+  -->
+  
+  <!-- Corner accent circles -->
+  <circle cx="60" cy="60" r="10" fill="#E389B2" opacity="0.2"/>
+  <circle cx="540" cy="240" r="10" fill="#E389B2" opacity="0.2"/>
+
+  <!-- Decorative curves in corners -->
+  <path class="decorative" d="M 80 80 Q 120 90 160 80" stroke-width="1.5" opacity="0.3"/>
+  <path class="decorative" d="M 440 220 Q 480 230 520 220" stroke-width="1.5" opacity="0.3"/>
+
+  <!-- Horizontal separator line -->
+  <line x1="100" y1="210" x2="500" y2="210" stroke="#E389B2" stroke-width="1" opacity="0.4"/>
+
+  <!-- 
+    Main text: "Мария" (Maria in Russian Cyrillic script)
+    x="300" y="180" centers it horizontally and positions it vertically
+    class="maria-text" applies the styling
+  -->
+  <text x="300" y="180" class="maria-text">Мария</text>
+</svg>

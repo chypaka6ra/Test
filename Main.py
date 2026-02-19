@@ -6,6 +6,72 @@ from bs4 import BeautifulSoup
 import time
 import sys
 import random
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Set, Dict, Optional, Tuple
+import logging
+
+# ===== CONSTANTS =====
+BROWSER_LAUNCH_ARGS = [
+    '--disable-blink-features=AutomationControlled',
+    '--disable-dev-shm-usage',
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-web-security',
+    '--disable-features=IsolateOrigins,site-per-process',
+    '--start-maximized'
+]
+
+VIEWPORT_SIZE = {'width': 1920, 'height': 1080}
+
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+
+DEFAULT_HEADERS = {
+    'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Connection': 'keep-alive',
+    'Upgrade-Insecure-Requests': '1'
+}
+
+DEFAULT_REQUEST_HEADERS = {
+    "User-Agent": USER_AGENT,
+    "Accept": "*/*",
+    "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive",
+    "Sec-Ch-Ua": '"Not_A Brand";v="8", "Chromium";v="120"',
+    "Sec-Ch-Ua-Mobile": "?0",
+    "Sec-Ch-Ua-Platform": '"Windows"',
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Upgrade-Insecure-Requests": "1"
+}
+
+CONTENT_TYPE_EXTENSIONS = {
+    'png': '.png',
+    'jpeg': '.jpg',
+    'jpg': '.jpg',
+    'svg': '.svg',
+    'gif': '.gif',
+    'webp': '.webp',
+    'html': '.html',
+    'javascript': '.js',
+    'css': '.css'
+}
+
+SCROLL_STEP = 500
+DEFAULT_WAIT_TIME = 60
+DEFAULT_TIMEOUT = 30000
+REQUEST_TIMEOUT = 30
+MAX_FILENAME_LENGTH = 200
+REQUEST_DELAY = (0.5, 2.0)
+DOWNLOAD_CHUNK_SIZE = 8192
+MAX_WORKERS = 4
+
+# ===== LOGGING SETUP =====
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 
 def check_playwright_installation():
@@ -18,84 +84,372 @@ def check_playwright_installation():
         return False
 
 
+def safe_filename(filename: str, max_length: int = MAX_FILENAME_LENGTH) -> str:
+    """Replace invalid characters in filename."""
+    invalid_chars = '<>:"/\\|?*'
+    for char in invalid_chars:
+        filename = filename.replace(char, '_')
+    if len(filename) > max_length:
+        name, ext = os.path.splitext(filename)
+        filename = name[:max_length - len(ext)] + ext
+    return filename
+
+
+def get_extension_from_content_type(content_type: str) -> Optional[str]:
+    """Get file extension based on content type."""
+    content_type = content_type.lower()
+    for key, ext in CONTENT_TYPE_EXTENSIONS.items():
+        if key in content_type:
+            return ext
+    return None
+
+
+def get_local_path(resource_url: str, output_path: Path, parsed_final_url) -> Optional[Path]:
+    """Get local file path for a remote resource."""
+    parsed = urlparse(resource_url)
+    if not parsed.scheme or parsed.scheme in ['data', 'javascript', 'about', 'blob']:
+        return None
+
+    path = parsed.path
+    if not path or path.endswith('/'):
+        path = path + 'index.html'
+
+    path = path.lstrip('/')
+    domain = parsed.netloc.replace(':', '_')
+
+    path_parts = path.split('/')
+    safe_parts = [safe_filename(part) for part in path_parts]
+    safe_path = '/'.join(safe_parts)
+
+    full_path = output_path / domain / safe_path
+    return full_path
+
+
+def get_relative_path(downloaded_path: Path, output_path: Path) -> Optional[str]:
+    """Get relative path from output_path to downloaded_path."""
+    try:
+        rel_path = os.path.relpath(downloaded_path, output_path)
+        return rel_path.replace(os.sep, '/')
+    except:
+        return None
+
+
+def extract_urls_from_srcset(srcset: str, final_url: str) -> Set[str]:
+    """Extract URLs from srcset attribute."""
+    urls = set()
+    parts = srcset.split(',')
+    for part in parts:
+        src_candidate = part.strip().split(' ')[0]
+        if src_candidate and not src_candidate.startswith('data:'):
+            abs_url = urljoin(final_url, src_candidate)
+            urls.add(abs_url)
+    return urls
+
+
+def extract_resources_from_html(html_content: str, final_url: str) -> Set[str]:
+    """Extract all resource URLs from HTML content."""
+    soup = BeautifulSoup(html_content, "html.parser")
+    resources = set()
+
+    # CSS files
+    for link in soup.find_all("link", rel="stylesheet"):
+        href = link.get("href")
+        if href and not href.startswith('data:'):
+            resources.add(urljoin(final_url, href))
+
+    # JS files
+    for script in soup.find_all("script", src=True):
+        src = script.get("src")
+        if src and not src.startswith('data:'):
+            resources.add(urljoin(final_url, src))
+
+    # Images
+    for img in soup.find_all("img", src=True):
+        src = img.get("src")
+        if src and not src.startswith('data:'):
+            resources.add(urljoin(final_url, src))
+
+    # Images in srcset
+    for img in soup.find_all("img", srcset=True):
+        srcset = img.get("srcset")
+        if srcset:
+            resources.update(extract_urls_from_srcset(srcset, final_url))
+
+    # Source elements
+    for source in soup.find_all("source", src=True):
+        src = source.get("src")
+        if src and not src.startswith('data:'):
+            resources.add(urljoin(final_url, src))
+
+    # Source with srcset
+    for source in soup.find_all("source", srcset=True):
+        srcset = source.get("srcset")
+        if srcset:
+            resources.update(extract_urls_from_srcset(srcset, final_url))
+
+    # Favicon
+    for link in soup.find_all("link", rel=["icon", "shortcut icon", "apple-touch-icon"]):
+        href = link.get("href")
+        if href and not href.startswith('data:'):
+            resources.add(urljoin(final_url, href))
+
+    # Background images in styles
+    import re
+    for tag in soup.find_all(style=True):
+        style = tag.get("style")
+        if 'url(' in style:
+            urls = re.findall(r'url\([\'"]?([^\'")]+)[\'"]?\)', style)
+            for url_match in urls:
+                if url_match and not url_match.startswith('data:'):
+                    resources.add(urljoin(final_url, url_match))
+
+    return resources
+
+
+def download_resource(res_url: str, local_path: Path, session: requests.Session) -> Tuple[str, Optional[Path]]:
+    """Download a single resource and return (url, local_path) tuple."""
+    if local_path.exists():
+        return res_url, local_path
+
+    try:
+        local_path.parent.mkdir(parents=True, exist_ok=True)
+        time.sleep(random.uniform(*REQUEST_DELAY))
+
+        response = session.get(res_url, stream=True, timeout=REQUEST_TIMEOUT, allow_redirects=True)
+        response.raise_for_status()
+
+        # Determine extension from content type
+        content_type = response.headers.get('content-type', '').lower()
+        ext = get_extension_from_content_type(content_type)
+        if ext and not local_path.suffix:
+            local_path = local_path.with_suffix(ext)
+
+        # Download file
+        with open(local_path, "wb") as f:
+            for chunk in response.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+                if chunk:
+                    f.write(chunk)
+
+        return res_url, local_path
+    except Exception as e:
+        logger.warning(f"Failed to download {res_url}: {e}")
+        return res_url, None
+
+
+def download_resources_parallel(resources: Set[str], output_path: Path, session: requests.Session) -> Dict[str, Path]:
+    """Download all resources in parallel using ThreadPoolExecutor."""
+    downloaded_files = {}
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {}
+        for i, res_url in enumerate(resources, 1):
+            local_path = get_local_path(res_url, output_path, None)
+            if not local_path:
+                continue
+
+            future = executor.submit(download_resource, res_url, local_path, session)
+            futures[future] = (i, len(resources), res_url)
+
+        for future in as_completed(futures):
+            i, total, res_url = futures[future]
+            try:
+                url, path = future.result()
+                if path:
+                    downloaded_files[url] = path
+                    logger.info(f"[{i}/{total}] Downloaded: {res_url[:80]}")
+                else:
+                    logger.warning(f"[{i}/{total}] Failed: {res_url[:80]}")
+            except Exception as e:
+                logger.error(f"[{i}/{total}] Error: {e}")
+
+    return downloaded_files
+
+
+def update_html_links(html_content: str, downloaded_files: Dict[str, Path], final_url: str, output_path: Path) -> Tuple[str, int]:
+    """Update links in HTML to point to downloaded local files."""
+    soup = BeautifulSoup(html_content, "html.parser")
+    link_count = 0
+
+    # Helper to update link attributes
+    def update_href_or_src(element, attr_name: str):
+        nonlocal link_count
+        attr_value = element.get(attr_name)
+        if attr_value and not attr_value.startswith('data:'):
+            abs_url = urljoin(final_url, attr_value)
+            if abs_url in downloaded_files:
+                rel_path = get_relative_path(downloaded_files[abs_url], output_path)
+                if rel_path:
+                    element[attr_name] = rel_path
+                    link_count += 1
+
+    # Update CSS links
+    for link in soup.find_all("link", rel="stylesheet"):
+        update_href_or_src(link, "href")
+
+    # Update JS src
+    for script in soup.find_all("script", src=True):
+        update_href_or_src(script, "src")
+
+    # Update img src
+    for img in soup.find_all("img", src=True):
+        update_href_or_src(img, "src")
+
+    # Update source src
+    for source in soup.find_all("source", src=True):
+        update_href_or_src(source, "src")
+
+    # Update favicon
+    for link in soup.find_all("link", rel=["icon", "shortcut icon", "apple-touch-icon"]):
+        update_href_or_src(link, "href")
+
+    return str(soup), link_count
+
+
 def scroll_to_bottom(page, scroll_pause=2):
-    """
-    Плавно прокручивает страницу до самого конца для загрузки всего контента
+    """Smoothly scroll page to bottom for loading all content."""
+    logger.info("📜 Starting page scrolling for content loading...")
 
-    Args:
-        page: объект страницы Playwright
-        scroll_pause: пауза между прокрутками в секундах
-    """
-    print("   📜 Начинаем прокрутку страницы для загрузки контента...")
-
-    # Получаем высоту страницы
     last_height = page.evaluate("document.body.scrollHeight")
     scroll_position = 0
-    scroll_step = 500  # шаг прокрутки в пикселях
 
     while True:
-        # Прокручиваем на шаг вниз
-        scroll_position += scroll_step
+        scroll_position += SCROLL_STEP
         page.evaluate(f"window.scrollTo(0, {scroll_position})")
-
-        # Ждём загрузки контента
         time.sleep(scroll_pause)
 
-        # Проверяем новые элементы
         new_height = page.evaluate("document.body.scrollHeight")
-
-        # Показываем прогресс
         progress = min(100, int((scroll_position / new_height) * 100))
-        print(f"      Прогресс: {progress}% (высота: {scroll_position}/{new_height})", end='\r')
+        logger.info(f"      Progress: {progress}% (height: {scroll_position}/{new_height})")
 
-        # Если дошли до конца или высота не меняется
         if scroll_position >= new_height or (new_height == last_height and scroll_position >= last_height):
             break
 
         last_height = new_height
 
-    # Прокручиваем плавно в самый низ
-    page.evaluate("""
-        window.scrollTo({
-            top: document.body.scrollHeight,
-            behavior: 'smooth'
-        });
-    """)
+    # Scroll to bottom smoothly
+    page.evaluate("window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});")
     time.sleep(scroll_pause)
 
-    # Прокручиваем обратно наверх (для загрузки изображений вверху)
-    page.evaluate("""
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    """)
+    # Scroll back to top
+    page.evaluate("window.scrollTo({top: 0, behavior: 'smooth'});")
     time.sleep(scroll_pause)
 
-    print("   ✅ Прокрутка завершена                     ")
+    logger.info("✅ Scrolling completed")
 
 
-def download_page(url, output_dir="snapshot", timeout=30000, wait_time=60):
+def setup_browser_context(p):
+    """Setup browser with anti-detection measures."""
+    browser = p.chromium.launch(
+        headless=True,
+        args=BROWSER_LAUNCH_ARGS
+    )
+
+    context = browser.new_context(
+        viewport=VIEWPORT_SIZE,
+        user_agent=USER_AGENT,
+        extra_http_headers=DEFAULT_HEADERS
+    )
+
+    page = context.new_page()
+
+    # Anti-detection script
+    page.add_init_script("""
+        Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+        Object.defineProperty(navigator, 'plugins', {get: () => [1, 2, 3, 4, 5]});
+        Object.defineProperty(navigator, 'languages', {get: () => ['ru-RU', 'ru', 'en-US', 'en']});
+        window.chrome = {runtime: {}};
+        Object.defineProperty(navigator, 'pdfViewerEnabled', {get: () => true});
+    """)
+
+    page.set_default_timeout(DEFAULT_TIMEOUT)
+    page.on("pageerror", lambda err: logger.warning(f"Page error: {err}"))
+    page.on("console", lambda msg: logger.debug(f"Console: {msg.text}") if msg.type != 'debug' else None)
+
+    return browser, context, page
+
+
+def load_page_with_wait(page, url: str, wait_time: int) -> Tuple[bool, str]:
+    """Load page and wait for dynamic content."""
+    try:
+        logger.info(f"🌐 Loading page {url}...")
+        response = page.goto(url, wait_until="networkidle", timeout=DEFAULT_TIMEOUT)
+
+        if not response or response.status >= 400:
+            logger.error(f"HTTP error: {response.status if response else 'No response'}")
+            return False, ""
+
+        logger.info(f"📊 Load status: {response.status}")
+        logger.info(f"🔗 Final URL: {page.url}")
+
+        # Wait for dynamic content with stages
+        logger.info(f"⏰ Waiting {wait_time} seconds for dynamic content...")
+
+        remaining_time = wait_time
+        # Stage 1: Initial load
+        logger.info("   Stage 1: Initial loading...")
+        for second in range(min(10, remaining_time)):
+            if second % 2 == 0:
+                resources = len(page.evaluate("() => performance.getEntriesByType('resource')"))
+                logger.info(f"      Loaded resources: {resources}")
+            time.sleep(1)
+        remaining_time -= 10
+
+        # Stage 2: Scroll to bottom
+        if remaining_time > 0:
+            logger.info("   Stage 2: Scrolling page...")
+            scroll_to_bottom(page)
+            remaining_time -= 10
+
+            resources = len(page.evaluate("() => performance.getEntriesByType('resource')"))
+            logger.info(f"      Resources after scroll: {resources}")
+
+        # Stage 3: Final wait
+        if remaining_time > 0:
+            logger.info(f"   Stage 3: Final wait {remaining_time} seconds...")
+            for second in range(remaining_time):
+                if second % 5 == 0:
+                    resources = len(page.evaluate("() => performance.getEntriesByType('resource')"))
+                    elements = len(page.evaluate("() => document.querySelectorAll('*')"))
+                    logger.info(f"      Resources: {resources} | DOM elements: {elements}")
+
+                if second % 15 == 0 and second > 0:
+                    page.evaluate("window.scrollBy(0, 300)")
+
+                time.sleep(1)
+
+        logger.info("✅ All stages completed")
+        final_resources = len(page.evaluate("() => performance.getEntriesByType('resource')"))
+        final_elements = len(page.evaluate("() => document.querySelectorAll('*')"))
+        logger.info(f"   📊 Result: {final_resources} resources, {final_elements} DOM elements")
+
+        return True, page.content()
+
+    except Exception as e:
+        logger.error(f"Error loading page: {e}")
+        import traceback
+        traceback.print_exc()
+        return False, ""
+
+
+def download_page(url, output_dir="snapshot", timeout=30000, wait_time=DEFAULT_WAIT_TIME):
     """
-    Скачивает страницу по URL со всеми ресурсами (css, js, изображения)
-    и сохраняет локальную копию в папку output_dir.
+    Download page with all resources and save local copy.
 
     Args:
-        url: URL страницы для скачивания
-        output_dir: директория для сохранения
-        timeout: таймаут ожидания загрузки страницы в миллисекундах
-        wait_time: время ожидания после загрузки для динамического контента (в секундах)
+        url: URL to download
+        output_dir: output directory
+        timeout: page load timeout in ms
+        wait_time: wait time for dynamic content in seconds
     """
     if not check_playwright_installation():
         return False
 
     from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
-    # Создаём выходную директорию
     output_path = Path(output_dir)
     output_path.mkdir(exist_ok=True)
 
-    print(f"🌐 Загружаем страницу {url}...")
+    logger.info(f"🌐 Starting page download {url}...")
 
     # 1. Загружаем страницу через Playwright (с поддержкой JavaScript)
     try:

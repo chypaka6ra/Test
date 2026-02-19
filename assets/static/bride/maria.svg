@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 324.8" width="800" height="324.8">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Segoe+Script:wght@400;700&amp;display=swap');
+    </style>
+  </defs>
+  
+  <text 
+    x="400" 
+    y="244.8" 
+    font-family="'Segoe Script', cursive" 
+    font-size="184.8" 
+    fill="rgb(227, 137, 178)" 
+    text-anchor="middle" 
+    font-weight="normal"
+  >
+    Мария
+  </text>
+</svg>

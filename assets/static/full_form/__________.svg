@@ -10,21 +10,21 @@
       text {
         	  	    font-family: 'babayka font';
         fill: rgb(39, 21, 11);
-        font-size: 75px;
+        font-size: 80px;
       }
     </style>
   </defs>
 
   <text
-    x="700" 
-    y="100" 
+    x="750" 
+    y="80" 
     dominant-baseline="middle"
     text-anchor="middle">
 	Просим вас сообщить, сможете вы быть
   </text>
   
     <text
-    x="700" 
+    x="750" 
     y="150" 
     dominant-baseline="middle"
     text-anchor="middle">

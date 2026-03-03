@@ -9,13 +9,13 @@
       }
       text {
         	  	    font-family: 'babayka font';
-        font-size: 75px;
+        font-size: 85px;
       }
     </style>
   </defs>
 
   <text
-    x="320" 
+    x="350" 
     y="50" 
     dominant-baseline="middle"
     text-anchor="middle">
@@ -23,8 +23,8 @@
   </text>
   
     <text
-    x="320" 
-    y="100" 
+    x="350" 
+    y="120" 
     dominant-baseline="middle"
     text-anchor="middle">
 	Окончание вечера

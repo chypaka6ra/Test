@@ -25,7 +25,7 @@
   
     <text
     x="750" 
-    y="150" 
+    y="170" 
     dominant-baseline="middle"
     text-anchor="middle">
 	Сразу после свадьбы мы уедем в Питер,
@@ -33,7 +33,7 @@
   
       <text
     x="750" 
-    y="200" 
+    y="240" 
     dominant-baseline="middle"
     text-anchor="middle">
 	а цветы без нас завянут :с
@@ -42,7 +42,7 @@
   
       <text
     x="750" 
-    y="250" 
+    y="310" 
     dominant-baseline="middle"
     text-anchor="middle">
 	Вместо этого можно оформить 
@@ -50,7 +50,7 @@
     
       <text
     x="750" 
-    y="300" 
+    y="380" 
     dominant-baseline="middle"
     text-anchor="middle">
 	подписку на цветы

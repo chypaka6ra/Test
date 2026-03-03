@@ -104,6 +104,15 @@
             // Добавляем плавное исчезание
             preloader.style.transition = 'opacity 0.5s ease-out';
             preloader.style.opacity = '0';
+
+            // После завершения fade out анимации - удаляем элемент из DOM
+            preloader.addEventListener('transitionend', function removePreloaderOnTransitionEnd() {
+                if (preloader.style.opacity === '0') {
+                    preloader.remove();
+                    console.log('[Loading Screen] ✓ Preloader removed from DOM after fade out');
+                    preloader.removeEventListener('transitionend', removePreloaderOnTransitionEnd);
+                }
+            });
         }, TIMING.COUNTER_DURATION);
 
         // Разрешаем скролл после завершения счетчика + fade out

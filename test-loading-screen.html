@@ -82,12 +82,22 @@
 
     <!-- Содержимое страницы -->
     <div class="content">
-        <h1>🎨 Test Loading Screen</h1>
+        <h1>🎨 Loading Screen (Scroll-Triggered)</h1>
 
         <div class="status">
-            <p><span class="info">➜ Loading Screen Component Test</span></p>
-            <p>Если вы видите белый экран со счетчиком (0% → 100%), значит компонент работает!</p>
+            <p><span class="info">➜ Scroll-Triggered Animation Test</span></p>
+            <p><strong>Прокрутите страницу вниз!</strong></p>
+            <p>Когда вы доскролите до элемента "Trigger Loading Screen", анимация запустится автоматически.</p>
         </div>
+
+        <h2>📋 Как это работает:</h2>
+        <ul>
+            <li><span class="success">✓</span> HTML структура загружается при открытии страницы</li>
+            <li><span class="success">✓</span> Но анимация <strong>НЕ</strong> запускается автоматически</li>
+            <li><span class="success">✓</span> Используется <code>Intersection Observer</code> для отслеживания элемента</li>
+            <li><span class="success">✓</span> Когда элемент <code>#loading-screen-trigger</code> становится видимым → запускается анимация</li>
+            <li><span class="success">✓</span> Или вызовите <code>window.LoadingScreen.start()</code> вручную</li>
+        </ul>
 
         <h2>✓ Что должно произойти:</h2>
         <ul>
@@ -145,23 +155,45 @@
         </div>
 
         <h2>🎯 Тестирование</h2>
-        <p>Для полноценного теста:</p>
+        <p><strong>Способ 1: Auto-Trigger (рекомендуется)</strong></p>
         <ol>
             <li>Откройте DevTools (F12)</li>
             <li>Перейдите на вкладку Console</li>
             <li>Обновите страницу (Ctrl+R или Cmd+R)</li>
-            <li>Наблюдайте логи появления/исчезания экрана</li>
-            <li>Проверьте что счетчик плавно изменяется от 0 до 100%</li>
-            <li>Убедитесь что после завершения страница становится доступной</li>
+            <li><strong>Прокрутите страницу вниз</strong></li>
+            <li>Когда дойдете до блока "TRIGGER ANIMATION HERE" → анимация запустится автоматически</li>
+            <li>Наблюдайте логи в консоли</li>
+        </ol>
+
+        <p style="margin-top: 20px;"><strong>Способ 2: Manual Trigger</strong></p>
+        <ol>
+            <li>Откройте DevTools (F12) → Console</li>
+            <li>Введите команду: <code>window.LoadingScreen.start()</code></li>
+            <li>Нажмите Enter</li>
+            <li>Анимация запустится сразу</li>
         </ol>
 
         <h2>💡 Ручное управление</h2>
         <p>В консоли браузера вы можете использовать:</p>
         <div class="code-block">
+window.LoadingScreen.start()           // Запустить анимацию<br>
+window.LoadingScreen.hide()            // Принудительно скрыть<br>
+window.LoadingScreen.isStarted()       // true/false<br>
 window.LoadingScreen.isComplete()      // true/false<br>
-window.LoadingScreen.isInitialized()   // true/false<br>
-window.LoadingScreen.hide()            // Принудительно скрыть
+window.LoadingScreen.isInitialized()   // true/false
         </div>
+
+        <hr style="margin-top: 60px; border: 2px solid #007bff;">
+
+        <h2 style="text-align: center; color: #007bff; padding: 40px 0; font-size: 24px;">
+            ⬇️ TRIGGER ANIMATION HERE ⬇️<br>
+            <small style="font-size: 14px; color: #666;">Дойдите до этого места, чтобы запустить анимацию</small>
+        </h2>
+
+        <hr style="margin-bottom: 60px; border: 2px solid #007bff;">
+
+        <!-- ЭТО ЭЛЕМЕНТ-ТРИГГЕР ДЛЯ АНИМАЦИИ -->
+        <div id="loading-screen-trigger" style="display: none;"></div>
 
         <h2>📱 Особенности</h2>
         <ul>
@@ -180,7 +212,25 @@ window.LoadingScreen.hide()            // Принудительно скрыт�
             <li><strong>Счетчик:</strong> Анимируется плавно через requestAnimationFrame</li>
             <li><strong>Исчезание:</strong> Использует CSS transform (translateY) для оптимизации</li>
             <li><strong>Z-index:</strong> 9999 (поверх всех элементов)</li>
+            <li><strong>Триггер:</strong> Intersection Observer с threshold 0.1 (10% видимости)</li>
+            <li><strong>HTML структура:</strong> Создается при загрузке страницы (но не видна)</li>
+            <li><strong>Запуск анимации:</strong> При доскролле до #loading-screen-trigger или вручную</li>
         </ul>
+
+        <h2>⚙️ Как интегрировать в проект</h2>
+        <p>Чтобы анимация запускалась автоматически:</p>
+        <ol>
+            <li>Добавьте элемент-триггер в нужное место на странице:
+                <div class="code-block">&lt;div id="loading-screen-trigger"&gt;&lt;/div&gt;</div>
+            </li>
+            <li>Подключите скрипт loading-screen.js:
+                <div class="code-block">&lt;script src="assets/js/loading-screen.js"&gt;&lt;/script&gt;</div>
+            </li>
+            <li>Готово! Когда пользователь дойдет до этого элемента - анимация запустится</li>
+        </ol>
+
+        <p>Или запустите вручную из консоли:</p>
+        <div class="code-block">window.LoadingScreen.start()</div>
 
         <h2>✅ Результаты</h2>
         <p>Если все работает правильно, вы должны увидеть:</p>

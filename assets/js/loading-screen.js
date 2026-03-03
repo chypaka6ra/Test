@@ -1,7 +1,12 @@
 /**
- * Loading Screen Module - Simple and Reliable
- * Отображает полноэкранный прямоугольник (цвет #FBF7EE) со счетчиком загрузки от 0 до 100%
- * Затем удаляет прямоугольник и включает прокрутку страницы
+ * Loading Screen Module - Scroll-Triggered Animation
+ * Отображает полноэкранный прямоугольник (цвет #FBF7EE) со счетчиком от 0 до 100%
+ * когда пользователь доскролит до указанного элемента
+ *
+ * Использование:
+ * 1. Поместите элемент с id="loading-screen-trigger" на странице
+ * 2. Анимация запустится автоматически при доскролле до этого элемента
+ * 3. Или вызовите window.LoadingScreen.start() вручную
  */
 
 (function() {
@@ -19,7 +24,9 @@
     // Состояние
     let preloaderState = {
         isInitialized: false,
-        isComplete: false
+        isComplete: false,
+        isStarted: false,
+        hasCreatedHTML: false
     };
 
     /**
@@ -186,28 +193,91 @@
     }
 
     /**
-     * Инициализирует загрузку экрана
+     * Запускает Intersection Observer для отслеживания элемента на странице
+     * Анимация запустится когда элемент станет видимым в viewport
+     */
+    function setupScrollTrigger() {
+        // Сначала создаем HTML структуру (но не запускаем анимацию)
+        if (!preloaderState.hasCreatedHTML) {
+            createPreloaderHTML();
+            preloaderState.hasCreatedHTML = true;
+            console.log('[Loading Screen] HTML structure prepared (not started yet)');
+        }
+
+        // Ищем элемент-триггер
+        const triggerElement = document.getElementById('loading-screen-trigger');
+
+        if (triggerElement) {
+            // Создаем Intersection Observer
+            const observer = new IntersectionObserver(
+                function(entries) {
+                    entries.forEach(function(entry) {
+                        // Когда элемент становится видимым
+                        if (entry.isIntersecting && !preloaderState.isStarted) {
+                            console.log('[Loading Screen] ✓ Trigger element in view, starting animation...');
+                            preloaderState.isStarted = true;
+                            initLoadingScreen();
+
+                            // Отписываемся от наблюдения после первого срабатывания
+                            observer.unobserve(triggerElement);
+                        }
+                    });
+                },
+                {
+                    threshold: 0.1  // Срабатывает когда 10% элемента видно
+                }
+            );
+
+            // Начинаем наблюдать за элементом
+            observer.observe(triggerElement);
+            console.log('[Loading Screen] ✓ Intersection Observer attached to #loading-screen-trigger');
+        } else {
+            console.warn('[Loading Screen] ⚠ Trigger element #loading-screen-trigger not found');
+            console.log('[Loading Screen] Use window.LoadingScreen.start() to manually trigger animation');
+        }
+    }
+
+    /**
+     * Инициализирует и подготавливает модуль
      */
     function setupLoadingScreen() {
         // Если DOM еще загружается
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initLoadingScreen);
+            document.addEventListener('DOMContentLoaded', setupScrollTrigger);
         } else {
             // DOM уже готов
-            initLoadingScreen();
+            setupScrollTrigger();
         }
     }
 
     // ========== ЗАПУСК ==========
-    console.log('[Loading Screen] Module loaded, starting initialization...');
+    console.log('[Loading Screen] Module loaded, waiting for trigger...');
     setupLoadingScreen();
 
-    // Резервный таймер для гарантированного удаления
-    setTimeout(fallbackHideLoading, TIMING.FALLBACK_HIDE_DELAY);
+    // Резервный таймер для гарантированного удаления (если анимация была запущена)
+    setTimeout(function() {
+        if (preloaderState.isStarted && !preloaderState.isComplete) {
+            fallbackHideLoading();
+        }
+    }, TIMING.FALLBACK_HIDE_DELAY);
 
     // ========== PUBLIC API ==========
     // Экспортируем функции для внешнего управления
     window.LoadingScreen = {
+        /**
+         * Вручную запустить анимацию загрузки
+         * Используйте если нет элемента #loading-screen-trigger
+         */
+        start: function() {
+            if (!preloaderState.isStarted) {
+                console.log('[Loading Screen] Manual start triggered');
+                preloaderState.isStarted = true;
+                initLoadingScreen();
+            } else {
+                console.warn('[Loading Screen] Animation already started');
+            }
+        },
+
         /**
          * Принудительно скрыть прямоугольник загрузки
          */
@@ -227,8 +297,16 @@
          */
         isInitialized: function() {
             return preloaderState.isInitialized;
+        },
+
+        /**
+         * Проверить запущена ли анимация
+         * @returns {boolean} true если анимация запущена
+         */
+        isStarted: function() {
+            return preloaderState.isStarted;
         }
     };
 
-    console.log('[Loading Screen] ✓ Module ready');
+    console.log('[Loading Screen] ✓ Module ready (scroll-triggered mode)');
 })();

@@ -159,3 +159,72 @@ window.TildaDebug = {
         }
     }
 };
+
+/**
+ * Отправляет сообщение в Telegram бот
+ * @param {string} botToken - Токен Telegram бота
+ * @param {string} chatId - ID чата или пользователя (780759394)
+ * @param {string} message - Текст сообщения
+ * @returns {Promise} Промис с результатом отправки
+ */
+window.sendTelegramMessage = function(botToken, chatId, message) {
+    if (!botToken || !chatId || !message) {
+        console.warn('[Telegram] Missing required parameters');
+        return Promise.reject(new Error('Missing parameters'));
+    }
+
+    const apiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+    const params = new URLSearchParams({
+        chat_id: chatId,
+        text: message,
+        parse_mode: 'HTML'
+    });
+
+    return fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params.toString()
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('[Telegram] Message sent successfully:', data);
+        return data;
+    })
+    .catch(error => {
+        console.error('[Telegram] Error sending message:', error);
+        throw error;
+    });
+};
+
+/**
+ * Отправляет данные формы RSVP в Telegram бот
+ * @param {Object} formData - Данные формы {name, phone, email, guest_count, message}
+ * @param {string} botToken - Токен Telegram бота
+ * @param {string} chatId - ID чата (780759394)
+ * @returns {Promise} Промис с результатом отправки
+ */
+window.sendRSVPToTelegram = function(formData, botToken, chatId) {
+    if (!botToken || !chatId) {
+        console.warn('[RSVP] Missing bot token or chat ID');
+        return Promise.reject(new Error('Missing bot configuration'));
+    }
+
+    const message = `
+<b>Новое RSVP сообщение:</b>
+
+<b>Имя:</b> ${formData.name || 'Не указано'}
+<b>Телефон:</b> ${formData.phone || 'Не указано'}
+<b>Email:</b> ${formData.email || 'Не указано'}
+<b>Количество гостей:</b> ${formData.guest_count || 'Не указано'}
+<b>Сообщение:</b> ${formData.message || 'Нет сообщения'}
+    `.trim();
+
+    return window.sendTelegramMessage(botToken, chatId, message);
+};

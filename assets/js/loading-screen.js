@@ -15,10 +15,46 @@
         FALLBACK_HIDE_DELAY: 5300    // Резервная задержка скрытия (ms)
     };
 
+    // Состояние
+    let preloaderState = {
+        isInitialized: false,
+        isComplete: false
+    };
+
+    /**
+     * Создает HTML структуру прелоадера в DOM
+     */
+    function createPreloaderHTML() {
+        const preloaderHTML = `
+            <div class="uc-preloader slide-up-smooth" style="display: flex;">
+                <div class="preloader-shape slide-up-smooth"></div>
+                <div class="number">
+                    <div class="tn-atom">0</div>
+                </div>
+            </div>
+        `;
+
+        // Вставляем в самый начало body
+        const body = document.body;
+        if (body && !document.querySelector('.uc-preloader')) {
+            body.insertAdjacentHTML('afterbegin', preloaderHTML);
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Инициализирует и запускает анимацию экрана загрузки
      */
     function initLoadingScreen() {
+        // Не инициализируем дважды
+        if (preloaderState.isInitialized) {
+            return;
+        }
+
+        // Создаем прелоадер если его нет
+        const created = createPreloaderHTML();
+
         const preloader = document.querySelector('.uc-preloader');
         const numberElement = document.querySelector('.number .tn-atom');
         const numberContainer = document.querySelector('.number');
@@ -26,25 +62,30 @@
         const body = document.querySelector('.t-body');
 
         // Проверка наличия необходимых элементов
-        if (!preloader || !numberElement || !preloaderShape) {
-            console.error('[Loading Screen] Elements not found:', {
+        if (!preloader || !numberElement || !preloaderShape || !body) {
+            console.error('[Loading Screen] Failed to initialize:', {
+                created: created,
                 preloader: !!preloader,
                 numberElement: !!numberElement,
-                preloaderShape: !!preloaderShape
+                preloaderShape: !!preloaderShape,
+                body: !!body
             });
             return;
         }
 
-        console.log('[Loading Screen] Initializing...');
+        preloaderState.isInitialized = true;
 
-        // Показываем прелоадер
-        preloader.classList.remove('hide');
+        console.log('[Loading Screen] Initialized and showing preloader');
+
+        // Убедимся что прелоадер видимый и поверх всего
         preloader.style.display = 'flex';
-        numberContainer.classList.remove('hide');
+        preloader.style.zIndex = '9999';
+        preloaderShape.style.zIndex = '9998';
 
-        console.log('[Loading Screen] Preloader shown, starting counter animation');
+        // Убедимся что body не имеет overflow
+        body.classList.remove('overflow');
 
-        // Анимируем счетчик от 0 до 100
+        // Запускаем анимацию счетчика
         animateCounter(numberElement, TIMING.COUNTER_DURATION);
 
         // После завершения счетчика - скрываем элементы
@@ -62,8 +103,9 @@
 
         // Полностью скрываем элементы
         setTimeout(function() {
-            preloader.classList.add('hide');
-            numberContainer.classList.add('hide');
+            preloader.style.display = 'none';
+            numberContainer.style.display = 'none';
+            preloaderState.isComplete = true;
         }, TIMING.HIDE_DELAY);
     }
 
@@ -105,40 +147,54 @@
      * (на случай, если основная логика не сработает)
      */
     function fallbackHideLoading() {
+        if (preloaderState.isComplete) {
+            return; // Уже скрыто
+        }
+
         const preloader = document.querySelector('.uc-preloader');
         const numberContainer = document.querySelector('.number');
         const body = document.querySelector('.t-body');
 
         if (preloader) {
-            preloader.classList.add('hide');
+            preloader.style.display = 'none';
         }
         if (numberContainer) {
-            numberContainer.classList.add('hide');
+            numberContainer.style.display = 'none';
         }
         if (body) {
             body.classList.add('overflow');
         }
+
+        preloaderState.isComplete = true;
+        console.log('[Loading Screen] Fallback: hidden loading screen');
     }
 
-    // Инициализируем как можно раньше
+    /**
+     * Инициализирует загрузку экрана
+     */
     function setupLoadingScreen() {
-        // Если DOM уже загружен, запускаем сразу
+        // Если DOM еще загружается
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initLoadingScreen);
         } else {
-            // DOM уже готов, запускаем сразу
+            // DOM уже готов
             initLoadingScreen();
         }
     }
 
-    // Проверяем есть ли элементы прелоадера в DOM
-    if (document.querySelector('.uc-preloader')) {
-        setupLoadingScreen();
-    } else {
-        // Если элементов еще нет, ждем DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', setupLoadingScreen);
-    }
+    // Запускаем инициализацию как можно раньше
+    setupLoadingScreen();
 
     // Резервный таймер для гарантированного скрытия
     setTimeout(fallbackHideLoading, TIMING.FALLBACK_HIDE_DELAY);
+
+    // Экспортируем функции для внешнего использования
+    window.LoadingScreen = {
+        hide: fallbackHideLoading,
+        isComplete: function() { return preloaderState.isComplete; },
+        isInitialized: function() { return preloaderState.isInitialized; }
+    };
+
+    // Отличительная метка успешной инициализации
+    console.log('[Loading Screen] Module loaded successfully');
 })();

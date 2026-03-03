@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Screen Test</title>
+    <link href="assets/css/loading-screen.css" rel="stylesheet" type="text/css"/>
+    <script charset="utf-8" src="assets/js/loading-screen.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .content {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body class="t-body">
+    <!-- Preloader HTML -->
+    <div class="uc-preloader slide-up-smooth hide" style="display: flex;">
+        <div class="preloader-shape slide-up-smooth"></div>
+        <div class="number hide">
+            <div class="tn-atom">0</div>
+        </div>
+    </div>
+
+    <!-- Page content -->
+    <div class="content">
+        <h1>Loading Screen Test Page</h1>
+        <p>If the loading screen appeared with a counter (0-100), then it's working!</p>
+        <p>Open the browser console (F12) to see debug messages.</p>
+        <ul>
+            <li>Loading screen should appear immediately</li>
+            <li>Counter should animate from 0 to 100 in ~2.1 seconds</li>
+            <li>Screen should slide up and disappear after ~5.3 seconds</li>
+            <li>Page becomes scrollable after ~3.5 seconds</li>
+        </ul>
+    </div>
+
+    <script>
+        // Log when page is fully loaded
+        window.addEventListener('load', function() {
+            console.log('[Test Page] Page fully loaded');
+        });
+    </script>
+</body>
+</html>

@@ -267,9 +267,6 @@ window.sendRSVPToTelegram = function(formData, botToken, chatId) {
 
 <b>🍷 Предпочтения напитков:</b>
 ${drinksList}
-
-<b>💬 Комментарии:</b>
-${formData.comments || 'Нет'}
     `.trim();
 
     return window.sendTelegramMessage(botToken, chatId, message);

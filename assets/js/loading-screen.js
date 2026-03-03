@@ -225,10 +225,40 @@
     }
 
     /**
+     * Настраивает кнопку Telegram (t396__elem) чтобы была кликабельной
+     */
+    function setupTelegramButton() {
+        // Ищем элемент по классам
+        const telegramBtn = document.querySelector('.t396__elem.tn-elem.tn-elem__16700389511765476062932.t-sbs-anim_started');
+
+        if (telegramBtn) {
+            // Устанавливаем высокий z-index чтобы был поверх всего
+            telegramBtn.style.zIndex = '99999';
+            telegramBtn.style.position = 'relative';
+            telegramBtn.style.cursor = 'pointer';
+
+            // Добавляем обработчик клика
+            telegramBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.open('https://t.me/kasekuchen1337', '_blank');
+                console.log('[Telegram Button] Clicked, opening Telegram link');
+            });
+
+            console.log('[Telegram Button] ✓ Telegram button configured and set to top layer (z-index: 99999)');
+        } else {
+            console.warn('[Telegram Button] ⚠ Telegram button element not found');
+        }
+    }
+
+    /**
      * Инициализирует модуль при загрузке DOM
      */
     function initializeModule() {
         console.log('[Loading Screen] Module loaded');
+
+        // Настраиваем кнопку Telegram
+        setupTelegramButton();
 
         // Stage 1: Запускаем счетчик сразу
         startCounterAnimation();
@@ -281,6 +311,25 @@
 
         isComplete: function() {
             return preloaderState.isComplete;
+        },
+
+        /**
+         * Отправить фокус на кнопку Telegram
+         */
+        focusTelegramButton: function() {
+            const telegramBtn = document.querySelector('.t396__elem.tn-elem.tn-elem__16700389511765476062932.t-sbs-anim_started');
+            if (telegramBtn) {
+                telegramBtn.focus();
+                console.log('[Telegram Button] Focus set to Telegram button');
+            }
+        },
+
+        /**
+         * Открыть Telegram ссылку вручную
+         */
+        openTelegramLink: function() {
+            window.open('https://t.me/kasekuchen1337', '_blank');
+            console.log('[Telegram Button] Telegram link opened manually');
         }
     };
 

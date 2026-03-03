@@ -552,7 +552,7 @@ backface-visibility: hidden;
     'use strict';
 
     // Configuration
-    const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN'; // Replace with actual bot token
+    const TELEGRAM_BOT_TOKEN = '8546114994:AAETuYT8Afu_4VWjXAmfWEDeUu7jnop8cjU'; // Replace with actual bot token
     const TELEGRAM_CHAT_ID = '780759394'; // Recipient chat ID
 
     // Wait for forms to load
@@ -574,7 +574,7 @@ backface-visibility: hidden;
                 };
 
                 // Send to Telegram
-                if (window.sendRSVPToTelegram && TELEGRAM_BOT_TOKEN !== 'YOUR_BOT_TOKEN') {
+                if (window.sendRSVPToTelegram && TELEGRAM_BOT_TOKEN !== '8546114994:AAETuYT8Afu_4VWjXAmfWEDeUu7jnop8cjU') {
                     window.sendRSVPToTelegram(data, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)
                         .then(function(result) {
                             console.log('[RSVP] Successfully sent to Telegram');

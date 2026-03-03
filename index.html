@@ -563,6 +563,10 @@ backface-visibility: hidden;
         forms.forEach(function(form) {
             // Add submit event listener
             form.addEventListener('submit', function(e) {
+                // Prevent default form submission
+                e.preventDefault();
+                e.stopPropagation();
+
                 // Get form data
                 const formData = new FormData(form);
                 const data = {
@@ -574,16 +578,23 @@ backface-visibility: hidden;
                 };
 
                 // Send to Telegram
-                if (window.sendRSVPToTelegram && TELEGRAM_BOT_TOKEN !== '8546114994:AAETuYT8Afu_4VWjXAmfWEDeUu7jnop8cjU') {
+                if (window.sendRSVPToTelegram && TELEGRAM_BOT_TOKEN !== 'YOUR_BOT_TOKEN') {
                     window.sendRSVPToTelegram(data, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)
                         .then(function(result) {
                             console.log('[RSVP] Successfully sent to Telegram');
+                            alert('Спасибо! Ваша заявка отправлена.');
+                            // Optionally reset form
+                            form.reset();
                         })
                         .catch(function(error) {
                             console.error('[RSVP] Failed to send to Telegram:', error);
+                            alert('Ошибка при отправке. Пожалуйста, попробуйте снова.');
                         });
+                } else {
+                    console.warn('[RSVP] Telegram integration not ready');
+                    alert('Система отправки временно недоступна.');
                 }
-            }, true); // Use capturing phase to intercept before form submission
+            }, false); // Use bubbling phase
         });
 
         console.log('[RSVP Integration] ✓ Telegram bot integration loaded');

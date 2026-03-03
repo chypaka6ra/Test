@@ -1,6 +1,7 @@
 /**
- * Loading Screen Module
- * Управляет экраном загрузки с анимированным счетчиком процентов
+ * Loading Screen Module - Simple and Reliable
+ * Отображает полноэкранный прямоугольник (цвет #FBF7EE) со счетчиком загрузки от 0 до 100%
+ * Затем удаляет прямоугольник и включает прокрутку страницы
  */
 
 (function() {
@@ -8,11 +9,11 @@
 
     // Конфигурация таймингов
     const TIMING = {
-        COUNTER_DURATION: 2100,      // Длительность анимации счетчика (ms)
-        SHAPE_DELAY: 400,            // Задержка перед скрытием формы (ms)
-        SCROLL_ENABLE_DELAY: 3500,   // Задержка перед включением скролла (ms)
-        HIDE_DELAY: 5300,            // Задержка перед полным скрытием (ms)
-        FALLBACK_HIDE_DELAY: 5300    // Резервная задержка скрытия (ms)
+        COUNTER_DURATION: 2100,      // 0-100% счетчик (ms)
+        SHAPE_DELAY: 400,            // Задержка перед началом исчезания (ms)
+        SCROLL_ENABLE_DELAY: 3500,   // Разрешить скролл (ms)
+        HIDE_DELAY: 5300,            // Полное удаление прямоугольника (ms)
+        FALLBACK_HIDE_DELAY: 5300    // Резервное удаление (ms)
     };
 
     // Состояние
@@ -22,7 +23,8 @@
     };
 
     /**
-     * Создает HTML структуру прелоадера в DOM
+     * Создает HTML структуру прямоугольника загрузки
+     * Полноэкранный div с цветом #FBF7EE и счетчиком
      */
     function createPreloaderHTML() {
         const preloaderHTML = `
@@ -38,6 +40,7 @@
         const body = document.body;
         if (body && !document.querySelector('.uc-preloader')) {
             body.insertAdjacentHTML('afterbegin', preloaderHTML);
+            console.log('[Loading Screen] HTML structure created');
             return true;
         }
         return false;
@@ -45,6 +48,9 @@
 
     /**
      * Инициализирует и запускает анимацию экрана загрузки
+     * - Показывает полноэкранный прямоугольник (#FBF7EE)
+     * - Анимирует счетчик от 0 до 100%
+     * - Скрывает и удаляет прямоугольник
      */
     function initLoadingScreen() {
         // Не инициализируем дважды
@@ -52,7 +58,7 @@
             return;
         }
 
-        // Создаем прелоадер если его нет
+        // Создаем HTML структуру если ее нет
         const created = createPreloaderHTML();
 
         const preloader = document.querySelector('.uc-preloader');
@@ -61,7 +67,7 @@
         const preloaderShape = document.querySelector('.preloader-shape');
         const body = document.querySelector('.t-body');
 
-        // Проверка наличия необходимых элементов
+        // Проверка наличия всех элементов
         if (!preloader || !numberElement || !preloaderShape || !body) {
             console.error('[Loading Screen] Failed to initialize:', {
                 created: created,
@@ -75,42 +81,47 @@
 
         preloaderState.isInitialized = true;
 
-        console.log('[Loading Screen] Initialized and showing preloader');
+        console.log('[Loading Screen] ✓ Rectangle created (width: 100%, height: 100%, color: #FBF7EE)');
+        console.log('[Loading Screen] ✓ Starting counter animation (0% → 100%)');
 
-        // Убедимся что прелоадер видимый и поверх всего
+        // Убедимся что прямоугольник видимый
         preloader.style.display = 'flex';
         preloader.style.zIndex = '9999';
         preloaderShape.style.zIndex = '9998';
 
-        // Убедимся что body не имеет overflow
+        // Убедимся что body не имеет прокрутки
         body.classList.remove('overflow');
 
-        // Запускаем анимацию счетчика
+        // ========== СЧЕТЧИК 0-100% ==========
         animateCounter(numberElement, TIMING.COUNTER_DURATION);
 
-        // После завершения счетчика - скрываем элементы
+        // ========== СКРЫТИЕ ПРЯМОУГОЛЬНИКА ==========
+        // Начинаем исчезание прямоугольника
         setTimeout(function() {
+            console.log('[Loading Screen] Counter complete, starting to hide rectangle...');
             preloaderShape.classList.add('slide-up-smooth');
             preloader.classList.add('slide-up-smooth');
         }, TIMING.SHAPE_DELAY);
 
         // Разрешаем прокрутку страницы
         setTimeout(function() {
+            console.log('[Loading Screen] ✓ Page scrolling enabled');
             if (body) {
                 body.classList.add('overflow');
             }
         }, TIMING.SCROLL_ENABLE_DELAY);
 
-        // Полностью скрываем элементы
+        // Полностью удаляем прямоугольник из DOM
         setTimeout(function() {
             preloader.style.display = 'none';
             numberContainer.style.display = 'none';
             preloaderState.isComplete = true;
+            console.log('[Loading Screen] ✓ Rectangle removed, loading complete');
         }, TIMING.HIDE_DELAY);
     }
 
     /**
-     * Анимирует счетчик от 0 до конечного значения
+     * Анимирует счетчик от 0 до 100%
      * @param {HTMLElement} numberElement - Элемент для отображения числа
      * @param {number} duration - Длительность анимации в миллисекундах
      */
@@ -124,18 +135,22 @@
             const progress = Math.min(elapsed / duration, 1);
             const currentValue = Math.floor(progress * endValue);
 
+            // Обновляем числовое значение (0 → 100)
             numberElement.textContent = currentValue;
 
+            // Логируем начало анимации
             if (!hasLogged && progress > 0) {
                 console.log('[Loading Screen] Counter animation started');
                 hasLogged = true;
             }
 
+            // Продолжаем анимацию если не закончилось
             if (progress < 1) {
                 requestAnimationFrame(updateCounter);
             } else {
+                // Окончательно устанавливаем 100%
                 numberElement.textContent = endValue;
-                console.log('[Loading Screen] Counter animation completed (100%)');
+                console.log('[Loading Screen] ✓ Counter reached 100%');
             }
         }
 
@@ -143,18 +158,19 @@
     }
 
     /**
-     * Резервная функция для полного скрытия прелоадера
+     * Резервная функция для гарантированного удаления прямоугольника
      * (на случай, если основная логика не сработает)
      */
     function fallbackHideLoading() {
         if (preloaderState.isComplete) {
-            return; // Уже скрыто
+            return; // Уже удалено
         }
 
         const preloader = document.querySelector('.uc-preloader');
         const numberContainer = document.querySelector('.number');
         const body = document.querySelector('.t-body');
 
+        // Удаляем все элементы
         if (preloader) {
             preloader.style.display = 'none';
         }
@@ -166,7 +182,7 @@
         }
 
         preloaderState.isComplete = true;
-        console.log('[Loading Screen] Fallback: hidden loading screen');
+        console.log('[Loading Screen] ⚠ Fallback: Rectangle forcefully removed');
     }
 
     /**
@@ -182,19 +198,37 @@
         }
     }
 
-    // Запускаем инициализацию как можно раньше
+    // ========== ЗАПУСК ==========
+    console.log('[Loading Screen] Module loaded, starting initialization...');
     setupLoadingScreen();
 
-    // Резервный таймер для гарантированного скрытия
+    // Резервный таймер для гарантированного удаления
     setTimeout(fallbackHideLoading, TIMING.FALLBACK_HIDE_DELAY);
 
-    // Экспортируем функции для внешнего использования
+    // ========== PUBLIC API ==========
+    // Экспортируем функции для внешнего управления
     window.LoadingScreen = {
+        /**
+         * Принудительно скрыть прямоугольник загрузки
+         */
         hide: fallbackHideLoading,
-        isComplete: function() { return preloaderState.isComplete; },
-        isInitialized: function() { return preloaderState.isInitialized; }
+
+        /**
+         * Проверить завершена ли загрузка
+         * @returns {boolean} true если загрузка завершена
+         */
+        isComplete: function() {
+            return preloaderState.isComplete;
+        },
+
+        /**
+         * Проверить инициализирован ли экран
+         * @returns {boolean} true если экран инициализирован
+         */
+        isInitialized: function() {
+            return preloaderState.isInitialized;
+        }
     };
 
-    // Отличительная метка успешной инициализации
-    console.log('[Loading Screen] Module loaded successfully');
+    console.log('[Loading Screen] ✓ Module ready');
 })();

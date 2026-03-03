@@ -120,6 +120,17 @@
     margin-left: 8px;
 }
 
+/* Эффект при наведении на счетчик (кликабельный) */
+.number:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease-out;
+    opacity: 0.8;
+}
+
+.number:hover .tn-atom {
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
 /* ==========================================
    УТИЛИТЫ
    ========================================== */

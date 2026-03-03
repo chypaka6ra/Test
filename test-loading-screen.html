@@ -106,6 +106,7 @@
             <li><span class="success">✓</span> Цвет: <code>#FBF7EE</code> (светло-бежевый)</li>
             <li><span class="success">✓</span> В центре экрана отобразится счетчик: <code>0% → 100%</code></li>
             <li><span class="success">✓</span> Счетчик анимируется ~2.1 секунды</li>
+            <li><span class="success">✓</span> Счетчик <strong>кликабельный</strong> - открывает ссылку на Telegram</li>
             <li><span class="success">✓</span> После 100% прямоугольник плавно исчезает (fade out 0.5s)</li>
             <li><span class="success">✓</span> Скролл БЛОКИРОВАН во время счетчика</li>
             <li><span class="success">✓</span> После счетчика скролл РАЗБЛОКИРОВАН</li>
@@ -235,6 +236,8 @@ window.LoadingScreen.isComplete()        // true если все заверше�
         <ul>
             <li>✓ Полноэкранный прямоугольник блокирует весь контент</li>
             <li>✓ Счетчик четко видно в центре экрана</li>
+            <li>✓ Счетчик <strong>кликабельный</strong> - открывает ссылку на Telegram</li>
+            <li>✓ Hover эффект на счетчике (увеличение + тень)</li>
             <li>✓ Плавные анимации без резких скачков</li>
             <li>✓ Работает на всех современных браузерах</li>
             <li>✓ Оптимизировано для мобильных устройств</li>
@@ -255,6 +258,9 @@ window.LoadingScreen.isComplete()        // true если все заверше�
             <li><strong>Исчезание (Stage 2):</strong> CSS transform (translateY -120%) + transition 1.7s</li>
             <li><strong>Z-index:</strong> 9999 (поверх всех элементов)</li>
             <li><strong>Intersection Observer threshold:</strong> 0.1 (10% видимости триггера)</li>
+            <li><strong>Счетчик (Интерактивность):</strong> Кликабельный, открывает Telegram ссылку</li>
+            <li><strong>Cursor:</strong> pointer при наведении на счетчик</li>
+            <li><strong>Hover эффект:</strong> scale(1.1) + opacity 0.8 + text-shadow</li>
         </ul>
 
         <h2>⚙️ Как интегрировать в проект</h2>

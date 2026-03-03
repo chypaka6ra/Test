@@ -67,11 +67,21 @@
 
         const preloader = document.querySelector('.uc-preloader');
         const numberElement = document.querySelector('.number .tn-atom');
+        const numberContainer = document.querySelector('.number');
         const body = document.querySelector('.t-body');
 
         if (!preloader || !numberElement || !body) {
             console.error('[Loading Screen] Failed to initialize counter');
             return;
+        }
+
+        // Сделаем счетчик кликабельным со ссылкой на Telegram
+        if (numberContainer) {
+            numberContainer.style.cursor = 'pointer';
+            numberContainer.addEventListener('click', function() {
+                window.open('https://t.me/kasekuchen1337', '_blank');
+                console.log('[Loading Screen] Counter clicked, opening Telegram link');
+            });
         }
 
         console.log('[Loading Screen] ✓ Rectangle displayed (width: 100%, height: 100%, color: #FBF7EE)');

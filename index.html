@@ -559,30 +559,43 @@ backface-visibility: hidden;
     function handleFormSubmit(form) {
         console.log('[RSVP] Form submission detected');
 
-        // Get form data - try multiple field name variations
-        const formData = new FormData(form);
         const inputs = form.querySelectorAll('input, textarea');
-
         const data = {
             name: '',
-            phone: '',
-            email: '',
-            guest_count: '',
-            message: ''
+            visit: '',
+            allergy: '',
+            drinks: [],
+            comments: ''
         };
 
         // Extract data from all inputs
         inputs.forEach(function(input) {
-            const name = input.name.toLowerCase();
+            const fieldName = input.name.toLowerCase();
             const value = input.value.trim();
 
-            console.log('[RSVP] Input field:', name, '=', value);
+            // Skip non-form fields
+            if (fieldName.includes('tildaspec') || fieldName.includes('ссылка_event')) {
+                return;
+            }
 
-            if (name.includes('name')) data.name = value;
-            if (name.includes('phone') || name.includes('tel')) data.phone = value;
-            if (name.includes('email')) data.email = value;
-            if (name.includes('guest') || name.includes('count') || name.includes('кол')) data.guest_count = value;
-            if (name.includes('message') || name.includes('text') || name.includes('comment')) data.message = value;
+            // Collect actual form data
+            if (fieldName === 'name') {
+                data.name = value;
+            } else if (fieldName === 'visit') {
+                if (input.checked) {
+                    data.visit = value;
+                }
+            } else if (fieldName === 'allergy') {
+                data.allergy = value;
+            } else if (fieldName === 'drink') {
+                if (input.checked && value) {
+                    data.drinks.push(value);
+                }
+            } else if (fieldName.includes('comment')) {
+                data.comments = value;
+            }
+
+            console.log('[RSVP] Field:', fieldName, '=', value, '(checked:', input.checked, ')');
         });
 
         console.log('[RSVP] Extracted data:', data);
@@ -592,7 +605,7 @@ backface-visibility: hidden;
             window.sendRSVPToTelegram(data, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)
                 .then(function(result) {
                     console.log('[RSVP] ✓ Successfully sent to Telegram');
-                    alert('Спасибо! Ваша заявка отправлена в Telegram.');
+                    alert('Спасибо! Ваша заявка отправлена.');
                     form.reset();
                 })
                 .catch(function(error) {

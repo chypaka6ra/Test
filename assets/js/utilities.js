@@ -241,7 +241,7 @@ window.sendTelegramMessage = function(botToken, chatId, message) {
 
 /**
  * Отправляет данные формы RSVP в Telegram бот
- * @param {Object} formData - Данные формы {name, phone, email, guest_count, message}
+ * @param {Object} formData - Данные формы {name, visit, allergy, drinks, comments}
  * @param {string} botToken - Токен Telegram бота
  * @param {string} chatId - ID чата (780759394)
  * @returns {Promise} Промис с результатом отправки
@@ -252,14 +252,24 @@ window.sendRSVPToTelegram = function(formData, botToken, chatId) {
         return Promise.reject(new Error('Missing bot configuration'));
     }
 
-    const message = `
-<b>Новое RSVP сообщение:</b>
+    const drinksList = formData.drinks && formData.drinks.length > 0
+        ? formData.drinks.join(', ')
+        : 'Не указано';
 
-<b>Имя:</b> ${formData.name || 'Не указано'}
-<b>Телефон:</b> ${formData.phone || 'Не указано'}
-<b>Email:</b> ${formData.email || 'Не указано'}
-<b>Количество гостей:</b> ${formData.guest_count || 'Не указано'}
-<b>Сообщение:</b> ${formData.message || 'Нет сообщения'}
+    const message = `
+<b>📋 Новая RSVP заявка:</b>
+
+<b>👤 Имя:</b> ${formData.name || 'Не указано'}
+
+<b>✅ Присутствие:</b> ${formData.visit || 'Не указано'}
+
+<b>⚠️ Аллергия:</b> ${formData.allergy || 'Нет'}
+
+<b>🍷 Предпочтения напитков:</b>
+${drinksList}
+
+<b>💬 Комментарии:</b>
+${formData.comments || 'Нет'}
     `.trim();
 
     return window.sendTelegramMessage(botToken, chatId, message);

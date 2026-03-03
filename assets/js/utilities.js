@@ -173,32 +173,68 @@ window.sendTelegramMessage = function(botToken, chatId, message) {
         return Promise.reject(new Error('Missing parameters'));
     }
 
+    console.log('[Telegram] Attempting to send message to chat:', chatId);
+
+    // Primary method: Use CORS proxy
+    const corsProxy = 'https://cors-anywhere.herokuapp.com/';
     const apiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+    const proxyUrl = corsProxy + apiUrl;
+
     const params = new URLSearchParams({
         chat_id: chatId,
         text: message,
         parse_mode: 'HTML'
     });
 
-    return fetch(apiUrl, {
+    console.log('[Telegram] URL:', apiUrl);
+    console.log('[Telegram] Message length:', message.length);
+
+    return fetch(proxyUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: params.toString()
+        body: params.toString(),
+        mode: 'cors'
     })
     .then(response => {
+        console.log('[Telegram] Response status:', response.status);
+        console.log('[Telegram] Response ok:', response.ok);
+
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // Try without CORS proxy if it fails
+            console.warn('[Telegram] CORS proxy failed, trying direct method...');
+            return fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            }).then(res => {
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                return res.json();
+            });
         }
+
         return response.json();
     })
     .then(data => {
-        console.log('[Telegram] Message sent successfully:', data);
-        return data;
+        console.log('[Telegram] Response data:', data);
+        if (data.ok) {
+            console.log('[Telegram] ✓ Message sent successfully');
+            return data;
+        } else {
+            console.error('[Telegram] API error:', data.description);
+            throw new Error(data.description || 'Unknown Telegram API error');
+        }
     })
     .catch(error => {
-        console.error('[Telegram] Error sending message:', error);
+        console.error('[Telegram] Error sending message:', error.message);
+        console.error('[Telegram] Error stack:', error.stack);
         throw error;
     });
 };

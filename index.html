@@ -555,47 +555,95 @@ backface-visibility: hidden;
     const TELEGRAM_BOT_TOKEN = '8546114994:AAETuYT8Afu_4VWjXAmfWEDeUu7jnop8cjU'; // Replace with actual bot token
     const TELEGRAM_CHAT_ID = '780759394'; // Recipient chat ID
 
+    // Function to handle form submission
+    function handleFormSubmit(form) {
+        console.log('[RSVP] Form submission detected');
+
+        // Get form data - try multiple field name variations
+        const formData = new FormData(form);
+        const inputs = form.querySelectorAll('input, textarea');
+
+        const data = {
+            name: '',
+            phone: '',
+            email: '',
+            guest_count: '',
+            message: ''
+        };
+
+        // Extract data from all inputs
+        inputs.forEach(function(input) {
+            const name = input.name.toLowerCase();
+            const value = input.value.trim();
+
+            console.log('[RSVP] Input field:', name, '=', value);
+
+            if (name.includes('name')) data.name = value;
+            if (name.includes('phone') || name.includes('tel')) data.phone = value;
+            if (name.includes('email')) data.email = value;
+            if (name.includes('guest') || name.includes('count') || name.includes('кол')) data.guest_count = value;
+            if (name.includes('message') || name.includes('text') || name.includes('comment')) data.message = value;
+        });
+
+        console.log('[RSVP] Extracted data:', data);
+
+        // Send to Telegram
+        if (window.sendRSVPToTelegram && TELEGRAM_BOT_TOKEN) {
+            window.sendRSVPToTelegram(data, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)
+                .then(function(result) {
+                    console.log('[RSVP] ✓ Successfully sent to Telegram');
+                    alert('Спасибо! Ваша заявка отправлена в Telegram.');
+                    form.reset();
+                })
+                .catch(function(error) {
+                    console.error('[RSVP] ✗ Failed to send to Telegram:', error);
+                    alert('Ошибка при отправке: ' + error.message);
+                });
+        }
+    }
+
     // Wait for forms to load
     window.t_onReady(function() {
-        // Find all Tilda forms
-        const forms = document.querySelectorAll('.t-form, form[data-tilda-form]');
+        console.log('[RSVP Integration] Looking for forms...');
+
+        // Method 1: Direct form attachment
+        const forms = document.querySelectorAll('.t-form, form');
+        console.log('[RSVP Integration] Found', forms.length, 'forms');
 
         forms.forEach(function(form) {
-            // Add submit event listener
+            console.log('[RSVP] Attaching submit listener to form:', form.id || form.className);
+
             form.addEventListener('submit', function(e) {
-                // Prevent default form submission
                 e.preventDefault();
                 e.stopPropagation();
-
-                // Get form data
-                const formData = new FormData(form);
-                const data = {
-                    name: formData.get('name') || formData.get('Name') || '',
-                    phone: formData.get('phone') || formData.get('Phone') || '',
-                    email: formData.get('email') || formData.get('Email') || '',
-                    guest_count: formData.get('guests') || formData.get('Guests') || formData.get('guest_count') || '',
-                    message: formData.get('message') || formData.get('Message') || formData.get('comments') || ''
-                };
-
-                // Send to Telegram
-                if (window.sendRSVPToTelegram && TELEGRAM_BOT_TOKEN !== 'YOUR_BOT_TOKEN') {
-                    window.sendRSVPToTelegram(data, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)
-                        .then(function(result) {
-                            console.log('[RSVP] Successfully sent to Telegram');
-                            alert('Спасибо! Ваша заявка отправлена.');
-                            // Optionally reset form
-                            form.reset();
-                        })
-                        .catch(function(error) {
-                            console.error('[RSVP] Failed to send to Telegram:', error);
-                            alert('Ошибка при отправке. Пожалуйста, попробуйте снова.');
-                        });
-                } else {
-                    console.warn('[RSVP] Telegram integration not ready');
-                    alert('Система отправки временно недоступна.');
-                }
-            }, false); // Use bubbling phase
+                handleFormSubmit(form);
+            }, true);
         });
+
+        // Method 2: Delegate submit events to body
+        document.body.addEventListener('submit', function(e) {
+            const form = e.target.closest('.t-form, form');
+            if (form) {
+                console.log('[RSVP] Captured form submission via delegation');
+                e.preventDefault();
+                e.stopPropagation();
+                handleFormSubmit(form);
+            }
+        }, true);
+
+        // Method 3: Monitor for button clicks
+        document.body.addEventListener('click', function(e) {
+            const btn = e.target.closest('button[type="submit"], input[type="submit"]');
+            if (btn) {
+                const form = btn.closest('.t-form, form');
+                if (form) {
+                    console.log('[RSVP] Form submit button clicked');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleFormSubmit(form);
+                }
+            }
+        }, true);
 
         console.log('[RSVP Integration] ✓ Telegram bot integration loaded');
         console.log('[RSVP Integration] Chat ID:', TELEGRAM_CHAT_ID);

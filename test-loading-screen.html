@@ -142,8 +142,12 @@
         <h2>🔍 Отладка в консоли</h2>
         <p>Откройте консоль браузера (F12 → Console) и вы увидите логи:</p>
         <div class="code-block">
-[Loading Screen] Module loaded, starting initialization...<br>
-[Loading Screen] HTML structure created<br>
+[Loading Screen] Module loaded, waiting for trigger...<br>
+[Loading Screen] HTML structure prepared (not started yet)<br>
+[Loading Screen] ✓ Intersection Observer attached to #loading-screen-trigger<br>
+<br>
+(Когда пользователь доскролит до триггера)<br>
+[Loading Screen] ✓ Trigger element in view, starting animation...<br>
 [Loading Screen] ✓ Rectangle created (width: 100%, height: 100%, color: #FBF7EE)<br>
 [Loading Screen] ✓ Starting counter animation (0% → 100%)<br>
 [Loading Screen] Counter animation started<br>
@@ -151,7 +155,7 @@
 [Loading Screen] Counter complete, starting to hide rectangle...<br>
 [Loading Screen] ✓ Page scrolling enabled<br>
 [Loading Screen] ✓ Rectangle removed, loading complete<br>
-[Loading Screen] ✓ Module ready
+[Loading Screen] ✓ Module ready (scroll-triggered mode)
         </div>
 
         <h2>🎯 Тестирование</h2>

@@ -96,8 +96,8 @@
         preloader.style.zIndex = '9999';
         preloaderShape.style.zIndex = '9998';
 
-        // Убедимся что body не имеет прокрутки
-        body.classList.remove('overflow');
+        // Блокируем скролл во время анимации
+        body.classList.add('loading-screen-active');
 
         // ========== СЧЕТЧИК 0-100% ==========
         animateCounter(numberElement, TIMING.COUNTER_DURATION);
@@ -114,6 +114,7 @@
         setTimeout(function() {
             console.log('[Loading Screen] ✓ Page scrolling enabled');
             if (body) {
+                body.classList.remove('loading-screen-active');
                 body.classList.add('overflow');
             }
         }, TIMING.SCROLL_ENABLE_DELAY);
@@ -185,6 +186,7 @@
             numberContainer.style.display = 'none';
         }
         if (body) {
+            body.classList.remove('loading-screen-active');
             body.classList.add('overflow');
         }
 

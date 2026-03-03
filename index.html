@@ -587,15 +587,21 @@ backface-visibility: hidden;
                 }
             } else if (fieldName === 'allergy') {
                 data.allergy = value;
-            } else if (fieldName === 'drink') {
-                if (input.checked && value) {
-                    data.drinks.push(value);
-                }
             } else if (fieldName.includes('comment')) {
                 data.comments = value;
             }
 
             console.log('[RSVP] Field:', fieldName, '=', value, '(checked:', input.checked, ')');
+        });
+
+        // Special handling for drink checkboxes inside t-input-block
+        const drinkCheckboxes = form.querySelectorAll('.t-input-block input[type="checkbox"]:checked');
+        drinkCheckboxes.forEach(function(checkbox) {
+            const value = checkbox.value.trim();
+            if (value && !data.drinks.includes(value)) {
+                data.drinks.push(value);
+                console.log('[RSVP] Drink checkbox:', value);
+            }
         });
 
         console.log('[RSVP] Extracted data:', data);

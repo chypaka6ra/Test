@@ -87,7 +87,16 @@
         // Запускаем анимацию счетчика
         animateCounter(numberElement, TIMING.COUNTER_DURATION);
 
-        // Разрешаем скролл после завершения счетчика
+        // После завершения счетчика - начинаем fade out (0.5s)
+        setTimeout(function() {
+            console.log('[Loading Screen] ✓ Counter reached 100%, starting fade out...');
+
+            // Добавляем плавное исчезание
+            preloader.style.transition = 'opacity 0.5s ease-out';
+            preloader.style.opacity = '0';
+        }, TIMING.COUNTER_DURATION);
+
+        // Разрешаем скролл после завершения счетчика + fade out
         setTimeout(function() {
             console.log('[Loading Screen] ✓ Counter complete, page scrolling enabled');
             preloaderState.counterComplete = true;

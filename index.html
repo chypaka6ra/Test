@@ -405,7 +405,7 @@ backface-visibility: hidden;
 100% {transform:rotate(360deg);}
 }
 
-</style></head> <body class="t-body overflow" style="margin: 0px;"> <!--allrecords--> <div class="t-records t-records_animated t-records_visible" data-hook="blocks-collection-content-node" data-tilda-cookie="no" data-tilda-formskey="61c9d80de7b8bb15e4a716dc46670519" data-tilda-lazy="yes" data-tilda-page-alias="weddingmaket5" data-tilda-page-id="102504056" data-tilda-project-country="RU" data-tilda-project-headcode="yes" data-tilda-project-id="6670519" data-tilda-root-zone="com" id="allrecords"> <div class="r t-rec" data-animationappear="off" data-record-type="131" id="rec1757201221" style=" "> <!-- T123 --> <div class="t123"> <div class="t-container_100"> <div class="t-width t-width_100"> <!-- nominify begin --> <script src="assets/code.jquery/jquery-3.6.0.min.js"></script> <style>
+</style><link href="assets/css/loading-screen.css" rel="stylesheet" type="text/css"/></head> <body class="t-body overflow" style="margin: 0px;"> <!--allrecords--> <div class="t-records t-records_animated t-records_visible" data-hook="blocks-collection-content-node" data-tilda-cookie="no" data-tilda-formskey="61c9d80de7b8bb15e4a716dc46670519" data-tilda-lazy="yes" data-tilda-page-alias="weddingmaket5" data-tilda-page-id="102504056" data-tilda-project-country="RU" data-tilda-project-headcode="yes" data-tilda-project-id="6670519" data-tilda-root-zone="com" id="allrecords"> <div class="r t-rec" data-animationappear="off" data-record-type="131" id="rec1757201221" style=" "> <!-- T123 --> <div class="t123"> <div class="t-container_100"> <div class="t-width t-width_100"> <!-- nominify begin --> <script src="assets/code.jquery/jquery-3.6.0.min.js"></script> <style>
     .number .tn-atom:after {
         content: '%';
         font-size: 25px;
@@ -512,80 +512,7 @@ backface-visibility: hidden;
         display: none !important;
     }
 
-    .slide-up-smooth {
-        transform: translateY(-120%);
-        transition: transform 1.7s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-</style> <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        window.addEventListener('load', function() {
-            const preloader = document.querySelector('.uc-preloader');
-            const numberElement = document.querySelector('.number .tn-atom');
-            const numberContainer = document.querySelector('.number');
-            const preloaderShape = document.querySelector('.preloader-shape');
-            const body = document.querySelector('.t-body');
-
-            if (!preloader || !numberElement || !preloaderShape) {
-                console.error("Элементы прелоадера не найдены");
-                return;
-            }
-
-            // Показываем прелоадер
-            preloader.classList.remove('hide');
-            preloader.style.display = 'flex';
-
-            // Анимация счетчика от 0 до 100 (длительность: 2800ms)
-            let start = 0;
-            const end = 100;
-            const duration = 2100; // Тайминг из оригинального кода
-            const startTime = performance.now();
-
-            function animateCounter(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                const currentValue = Math.floor(progress * end);
-                numberElement.textContent = currentValue;
-
-                if (progress < 1) {
-                    requestAnimationFrame(animateCounter);
-                } else {
-                    numberElement.textContent = end;
-                    
-                    // После завершения счетчика, плавно скрываем белую область (задержка: 400ms)
-                    setTimeout(function() {
-                        preloaderShape.classList.add('slide-up-smooth');
-                        preloader.classList.add('slide-up-smooth');
-                    }, 400); // Тайминг из оригинального кода
-
-                    // Разрешаем прокрутку после исчезновения прелоадера (задержка: 3500ms)
-                    setTimeout(function() {
-                        if (body) body.classList.add('overflow');
-                    }, 3500); // Тайминг из оригинального кода
-
-                    // Минимальная задержка, чтобы убрать резкость (скрытие элементов: 5300ms)
-                    setTimeout(function() {
-                        preloader.classList.add('hide');
-                        numberContainer.classList.add('hide');
-                    }, 5300); // Тайминг из оригинального кода
-                }
-            }
-
-            requestAnimationFrame(animateCounter);
-        });
-    });
-
-    // Резервный таймер для полного скрытия (из оригинального кода)
-    setTimeout(function() {
-        const preloader = document.querySelector('.uc-preloader');
-        const numberContainer = document.querySelector('.number');
-        const body = document.querySelector('.t-body');
-        
-        if (preloader) preloader.classList.add('hide');
-        if (numberContainer) numberContainer.classList.add('hide');
-        if (body) body.classList.add('overflow');
-    }, 5300);
-</script> <!-- HTML прелоадера --> <div class="uc-preloader slide-up-smooth hide" style="display: flex;"> <div class="preloader-shape slide-up-smooth"></div> <div class="number hide"> <div class="tn-atom">100</div> </div> </div> <!-- nominify end --> </div> </div> </div> </div> <div class="r t-rec" data-animationappear="off" data-record-type="131" id="rec1772090131" style=" "> <!-- T123 --> <div class="t123"> <div class="t-container_100"> <div class="t-width t-width_100"> <!-- nominify begin --> <style>
+</style> <script async="" charset="utf-8" src="assets/js/loading-screen.js"></script> <!-- Loading Screen HTML --> <div class="uc-preloader slide-up-smooth hide" style="display: flex;"> <div class="preloader-shape slide-up-smooth"></div> <div class="number hide"> <div class="tn-atom">100</div> </div> </div> <!-- nominify end --> </div> </div> </div> </div> <div class="r t-rec" data-animationappear="off" data-record-type="131" id="rec1772090131" style=" "> <!-- T123 --> <div class="t123"> <div class="t-container_100"> <div class="t-width t-width_100"> <!-- nominify begin --> <style>
   * {
     -webkit-tap-highlight-color: transparent !important;
   }

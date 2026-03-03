@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="1100" height="300" viewBox="0 0 1100 300" xmlns="http://www.w3.org/2000/svg">
+<svg width="1500" height="350" viewBox="0 0 1500 350" xmlns="http://www.w3.org/2000/svg">
 
   <defs>
     <style>
@@ -16,7 +16,7 @@
   </defs>
 
   <text
-    x="550" 
+    x="750" 
     y="100" 
     dominant-baseline="middle"
     text-anchor="middle">
@@ -24,16 +24,16 @@
   </text>
   
     <text
-    x="550" 
-    y="145" 
+    x="750" 
+    y="150" 
     dominant-baseline="middle"
     text-anchor="middle">
 	Сразу после свадьбы мы уедем в Питер,
   </text>
   
       <text
-    x="550" 
-    y="190" 
+    x="750" 
+    y="200" 
     dominant-baseline="middle"
     text-anchor="middle">
 	а цветы без нас завянут :с
@@ -41,16 +41,16 @@
   
   
       <text
-    x="550" 
-    y="235" 
+    x="750" 
+    y="250" 
     dominant-baseline="middle"
     text-anchor="middle">
 	Вместо этого можно оформить 
   </text>
     
       <text
-    x="550" 
-    y="280" 
+    x="750" 
+    y="300" 
     dominant-baseline="middle"
     text-anchor="middle">
 	подписку на цветы

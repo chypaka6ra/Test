@@ -27,13 +27,22 @@
 
         // Проверка наличия необходимых элементов
         if (!preloader || !numberElement || !preloaderShape) {
-            console.error('Loading screen elements not found');
+            console.error('[Loading Screen] Elements not found:', {
+                preloader: !!preloader,
+                numberElement: !!numberElement,
+                preloaderShape: !!preloaderShape
+            });
             return;
         }
+
+        console.log('[Loading Screen] Initializing...');
 
         // Показываем прелоадер
         preloader.classList.remove('hide');
         preloader.style.display = 'flex';
+        numberContainer.classList.remove('hide');
+
+        console.log('[Loading Screen] Preloader shown, starting counter animation');
 
         // Анимируем счетчик от 0 до 100
         animateCounter(numberElement, TIMING.COUNTER_DURATION);
@@ -66,6 +75,7 @@
     function animateCounter(numberElement, duration) {
         const endValue = 100;
         const startTime = performance.now();
+        let hasLogged = false;
 
         function updateCounter(currentTime) {
             const elapsed = currentTime - startTime;
@@ -74,10 +84,16 @@
 
             numberElement.textContent = currentValue;
 
+            if (!hasLogged && progress > 0) {
+                console.log('[Loading Screen] Counter animation started');
+                hasLogged = true;
+            }
+
             if (progress < 1) {
                 requestAnimationFrame(updateCounter);
             } else {
                 numberElement.textContent = endValue;
+                console.log('[Loading Screen] Counter animation completed (100%)');
             }
         }
 
@@ -104,13 +120,25 @@
         }
     }
 
-    // Инициализируем при загрузке DOM
-    document.addEventListener('DOMContentLoaded', function() {
-        window.addEventListener('load', function() {
+    // Инициализируем как можно раньше
+    function setupLoadingScreen() {
+        // Если DOM уже загружен, запускаем сразу
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initLoadingScreen);
+        } else {
+            // DOM уже готов, запускаем сразу
             initLoadingScreen();
-        });
-    });
+        }
+    }
 
-    // Резервный таймер
+    // Проверяем есть ли элементы прелоадера в DOM
+    if (document.querySelector('.uc-preloader')) {
+        setupLoadingScreen();
+    } else {
+        // Если элементов еще нет, ждем DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', setupLoadingScreen);
+    }
+
+    // Резервный таймер для гарантированного скрытия
     setTimeout(fallbackHideLoading, TIMING.FALLBACK_HIDE_DELAY);
 })();

@@ -82,109 +82,135 @@
 
     <!-- Содержимое страницы -->
     <div class="content">
-        <h1>🎨 Loading Screen (Scroll-Triggered)</h1>
+        <h1>🎨 Loading Screen (Two-Stage Animation)</h1>
 
         <div class="status">
-            <p><span class="info">➜ Scroll-Triggered Animation Test</span></p>
-            <p><strong>Прокрутите страницу вниз!</strong></p>
-            <p>Когда вы доскролите до элемента "Trigger Loading Screen", анимация запустится автоматически.</p>
+            <p><span class="info">➜ Stage 1: Счетчик (на загрузке) + Stage 2: Исчезание (на скролле)</span></p>
+            <p>Вы должны видеть прямоугольник со счетчиком 0-100%. После этого прокрутите страницу вниз.</p>
         </div>
 
         <h2>📋 Как это работает:</h2>
         <ul>
-            <li><span class="success">✓</span> HTML структура загружается при открытии страницы</li>
-            <li><span class="success">✓</span> Но анимация <strong>НЕ</strong> запускается автоматически</li>
-            <li><span class="success">✓</span> Используется <code>Intersection Observer</code> для отслеживания элемента</li>
-            <li><span class="success">✓</span> Когда элемент <code>#loading-screen-trigger</code> становится видимым → запускается анимация</li>
-            <li><span class="success">✓</span> Или вызовите <code>window.LoadingScreen.start()</code> вручную</li>
+            <li><span class="success">✓ STAGE 1 (Page Load):</span> Прямоугольник появляется со счетчиком 0-100%</li>
+            <li><span class="success">✓</span> Скролл <strong>блокирован</strong> во время счетчика</li>
+            <li><span class="success">✓</span> После счетчика → скролл <strong>разблокирован</strong></li>
+            <li><span class="success">✓ STAGE 2 (On Scroll):</span> Используется <code>Intersection Observer</code> для отслеживания</li>
+            <li><span class="success">✓</span> Когда пользователь доскролит до <code>#loading-screen-trigger</code> → запускается исчезание</li>
+            <li><span class="success">✓</span> Прямоугольник скользит вверх и удаляется</li>
         </ul>
 
         <h2>✓ Что должно произойти:</h2>
+        <h3>Stage 1: Загрузка (На странице загружается)</h3>
         <ul>
-            <li><span class="success">✓</span> На экране должен появиться прямоугольник размером 100% × 100%</li>
-            <li><span class="success">✓</span> Цвет прямоугольника: <code>#FBF7EE</code> (светло-бежевый)</li>
+            <li><span class="success">✓</span> На экране появляется прямоугольник размером 100% × 100%</li>
+            <li><span class="success">✓</span> Цвет: <code>#FBF7EE</code> (светло-бежевый)</li>
             <li><span class="success">✓</span> В центре экрана отобразится счетчик: <code>0% → 100%</code></li>
-            <li><span class="success">✓</span> Счетчик будет анимироваться в течение ~2.1 секунд</li>
-            <li><span class="success">✓</span> После 2.5 сек прямоугольник начнет скользить вверх</li>
-            <li><span class="success">✓</span> Страница станет скролируемой через ~3.5 сек</li>
-            <li><span class="success">✓</span> Прямоугольник полностью исчезнет через ~5.3 сек</li>
-            <li><span class="success">✓</span> Страница будет доступна для просмотра</li>
+            <li><span class="success">✓</span> Счетчик анимируется ~2.1 секунды</li>
+            <li><span class="success">✓</span> Скролл БЛОКИРОВАН во время счетчика</li>
+            <li><span class="success">✓</span> После счетчика скролл РАЗБЛОКИРОВАН</li>
+        </ul>
+
+        <h3>Stage 2: Исчезание (При доскролле)</h3>
+        <ul>
+            <li><span class="success">✓</span> Прокрутите страницу вниз</li>
+            <li><span class="success">✓</span> Когда дойдете до элемента-триггера → прямоугольник начнет скользить вверх</li>
+            <li><span class="success">✓</span> Прямоугольник удаляется из DOM</li>
+            <li><span class="success">✓</span> Страница полностью доступна</li>
         </ul>
 
         <h2>📊 Таймлайн</h2>
         <table>
             <tr>
                 <th>Время (сек)</th>
+                <th>Stage</th>
                 <th>Действие</th>
             </tr>
-            <tr>
+            <tr style="background: #e8f5e9;">
                 <td><code>0.0</code></td>
-                <td>Прямоугольник появляется, счетчик начинает с 0%</td>
+                <td>Stage 1</td>
+                <td>Прямоугольник появляется, счетчик 0%</td>
             </tr>
-            <tr style="background: #f9f9f9;">
+            <tr style="background: #e8f5e9;">
                 <td><code>2.1</code></td>
-                <td>Счетчик достигает 100%</td>
+                <td>Stage 1</td>
+                <td>Счетчик достигает 100% ✓</td>
             </tr>
-            <tr>
+            <tr style="background: #e8f5e9;">
                 <td><code>2.5</code></td>
-                <td>Прямоугольник начинает плавно скользить вверх</td>
+                <td>Stage 1</td>
+                <td>Страница становится скролируемой ✓</td>
             </tr>
-            <tr style="background: #f9f9f9;">
-                <td><code>3.5</code></td>
-                <td>Страница становится скролируемой</td>
+            <tr style="background: #fff9c4;">
+                <td><code>~5-10+</code></td>
+                <td>Ожидание</td>
+                <td>Пользователь прокручивает страницу</td>
             </tr>
-            <tr>
-                <td><code>5.3</code></td>
-                <td>Прямоугольник удаляется из DOM</td>
+            <tr style="background: #e3f2fd;">
+                <td><code>На скролле</code></td>
+                <td>Stage 2</td>
+                <td>Триггер обнаружен → исчезание начинается</td>
+            </tr>
+            <tr style="background: #e3f2fd;">
+                <td><code>+0.4s</code></td>
+                <td>Stage 2</td>
+                <td>Прямоугольник скользит вверх (1.7s анимация)</td>
+            </tr>
+            <tr style="background: #e3f2fd;">
+                <td><code>+2.1s</code></td>
+                <td>Stage 2</td>
+                <td>Прямоугольник удаляется из DOM ✓</td>
             </tr>
         </table>
 
         <h2>🔍 Отладка в консоли</h2>
         <p>Откройте консоль браузера (F12 → Console) и вы увидите логи:</p>
         <div class="code-block">
-[Loading Screen] Module loaded, waiting for trigger...<br>
-[Loading Screen] HTML structure prepared (not started yet)<br>
-[Loading Screen] ✓ Intersection Observer attached to #loading-screen-trigger<br>
-<br>
-(Когда пользователь доскролит до триггера)<br>
-[Loading Screen] ✓ Trigger element in view, starting animation...<br>
-[Loading Screen] ✓ Rectangle created (width: 100%, height: 100%, color: #FBF7EE)<br>
+<strong>STAGE 1 (Page Load):</strong><br>
+[Loading Screen] Module loaded<br>
+[Loading Screen] HTML structure created<br>
+[Loading Screen] ✓ Rectangle displayed (width: 100%, height: 100%, color: #FBF7EE)<br>
 [Loading Screen] ✓ Starting counter animation (0% → 100%)<br>
 [Loading Screen] Counter animation started<br>
 [Loading Screen] ✓ Counter reached 100%<br>
-[Loading Screen] Counter complete, starting to hide rectangle...<br>
-[Loading Screen] ✓ Page scrolling enabled<br>
-[Loading Screen] ✓ Rectangle removed, loading complete<br>
-[Loading Screen] ✓ Module ready (scroll-triggered mode)
+[Loading Screen] ✓ Counter complete, page scrolling enabled<br>
+[Loading Screen] ✓ Intersection Observer ready (watching #loading-screen-trigger)<br>
+[Loading Screen] ✓ Module ready (two-stage mode)<br>
+<br>
+<strong>STAGE 2 (On Scroll - когда пользователь доскролит):</strong><br>
+[Loading Screen] ✓ Trigger element detected, starting hide animation...<br>
+[Loading Screen] ✓ Rectangle removed, loading complete
         </div>
 
         <h2>🎯 Тестирование</h2>
-        <p><strong>Способ 1: Auto-Trigger (рекомендуется)</strong></p>
+        <p><strong>Способ 1: Автоматическое (рекомендуется)</strong></p>
         <ol>
-            <li>Откройте DevTools (F12)</li>
-            <li>Перейдите на вкладку Console</li>
+            <li>Откройте DevTools (F12) → Console</li>
             <li>Обновите страницу (Ctrl+R или Cmd+R)</li>
-            <li><strong>Прокрутите страницу вниз</strong></li>
-            <li>Когда дойдете до блока "TRIGGER ANIMATION HERE" → анимация запустится автоматически</li>
+            <li>Вы должны видеть прямоугольник со счетчиком 0-100%</li>
+            <li>После счетчика скролл разблокируется</li>
+            <li><strong>Прокрутите страницу вниз до элемента "TRIGGER ANIMATION HERE"</strong></li>
+            <li>Прямоугольник скользит вверх и удаляется</li>
             <li>Наблюдайте логи в консоли</li>
         </ol>
 
-        <p style="margin-top: 20px;"><strong>Способ 2: Manual Trigger</strong></p>
+        <p style="margin-top: 20px;"><strong>Способ 2: Ручной запуск</strong></p>
         <ol>
             <li>Откройте DevTools (F12) → Console</li>
-            <li>Введите команду: <code>window.LoadingScreen.start()</code></li>
-            <li>Нажмите Enter</li>
-            <li>Анимация запустится сразу</li>
+            <li>Запустить только счетчик: <code>window.LoadingScreen.startCounter()</code></li>
+            <li>Или запустить только исчезание: <code>window.LoadingScreen.startHide()</code></li>
         </ol>
 
-        <h2>💡 Ручное управление</h2>
+        <h2>💡 Ручное управление (Public API)</h2>
         <p>В консоли браузера вы можете использовать:</p>
         <div class="code-block">
-window.LoadingScreen.start()           // Запустить анимацию<br>
-window.LoadingScreen.hide()            // Принудительно скрыть<br>
-window.LoadingScreen.isStarted()       // true/false<br>
-window.LoadingScreen.isComplete()      // true/false<br>
-window.LoadingScreen.isInitialized()   // true/false
+<strong>// Запуск этапов</strong><br>
+window.LoadingScreen.startCounter()      // Запустить счетчик (Stage 1)<br>
+window.LoadingScreen.startHide()         // Запустить исчезание (Stage 2)<br>
+<br>
+<strong>// Проверка статусов</strong><br>
+window.LoadingScreen.isCounterComplete() // true если счетчик завершен<br>
+window.LoadingScreen.isHideStarted()     // true если исчезание началось<br>
+window.LoadingScreen.isComplete()        // true если все завершено
         </div>
 
         <hr style="margin-top: 60px; border: 2px solid #007bff;">
@@ -211,30 +237,45 @@ window.LoadingScreen.isInitialized()   // true/false
 
         <h2>🔧 Технические детали</h2>
         <ul>
-            <li><strong>Размер прямоугольника:</strong> 100% ширины × 100% высоты (fixed position)</li>
+            <li><strong>Архитектура:</strong> Two-stage (двухэтапная) анимация</li>
+            <li><strong>Stage 1 Trigger:</strong> DOMContentLoaded (автоматически при загрузке)</li>
+            <li><strong>Stage 2 Trigger:</strong> Intersection Observer (#loading-screen-trigger или ручной вызов)</li>
+            <li><strong>Размер прямоугольника:</strong> 100% ширины × 100% высоты (position: fixed)</li>
             <li><strong>Цвет:</strong> #FBF7EE (светло-бежевый)</li>
-            <li><strong>Счетчик:</strong> Анимируется плавно через requestAnimationFrame</li>
-            <li><strong>Исчезание:</strong> Использует CSS transform (translateY) для оптимизации</li>
+            <li><strong>Счетчик (Stage 1):</strong> requestAnimationFrame для плавной анимации 0-100%</li>
+            <li><strong>Длительность счетчика:</strong> 2.1 сек</li>
+            <li><strong>Скролл блокируется:</strong> Во время Stage 1 (счетчик)</li>
+            <li><strong>Скролл разблокируется:</strong> После счетчика (~2.5 сек)</li>
+            <li><strong>Исчезание (Stage 2):</strong> CSS transform (translateY -120%) + transition 1.7s</li>
             <li><strong>Z-index:</strong> 9999 (поверх всех элементов)</li>
-            <li><strong>Триггер:</strong> Intersection Observer с threshold 0.1 (10% видимости)</li>
-            <li><strong>HTML структура:</strong> Создается при загрузке страницы (но не видна)</li>
-            <li><strong>Запуск анимации:</strong> При доскролле до #loading-screen-trigger или вручную</li>
+            <li><strong>Intersection Observer threshold:</strong> 0.1 (10% видимости триггера)</li>
         </ul>
 
         <h2>⚙️ Как интегрировать в проект</h2>
-        <p>Чтобы анимация запускалась автоматически:</p>
+        <p><strong>Stage 1 (Счетчик)</strong> - запускается АВТОМАТИЧЕСКИ при загрузке</p>
+        <p><strong>Stage 2 (Исчезание)</strong> - запускается при доскролле (или вручную)</p>
+
         <ol>
-            <li>Добавьте элемент-триггер в нужное место на странице:
-                <div class="code-block">&lt;div id="loading-screen-trigger"&gt;&lt;/div&gt;</div>
-            </li>
-            <li>Подключите скрипт loading-screen.js:
+            <li>Подключите скрипт loading-screen.js в конец body:
                 <div class="code-block">&lt;script src="assets/js/loading-screen.js"&gt;&lt;/script&gt;</div>
             </li>
-            <li>Готово! Когда пользователь дойдет до этого элемента - анимация запустится</li>
+            <li>Добавьте CSS:
+                <div class="code-block">&lt;link href="assets/css/loading-screen.css" rel="stylesheet"&gt;</div>
+            </li>
+            <li><strong>Для автоматического Stage 2:</strong> Добавьте триггер-элемент где нужно запустить исчезание:
+                <div class="code-block">&lt;div id="loading-screen-trigger"&gt;&lt;/div&gt;</div>
+            </li>
+            <li>Готово! Счетчик запустится сразу, исчезание - при доскролле</li>
         </ol>
 
-        <p>Или запустите вручную из консоли:</p>
-        <div class="code-block">window.LoadingScreen.start()</div>
+        <p><strong>Для ручного управления:</strong></p>
+        <div class="code-block">
+// Запустить Stage 1 (если не запустился автоматически)<br>
+window.LoadingScreen.startCounter();<br>
+<br>
+// Запустить Stage 2 (если нет триггер-элемента)<br>
+window.LoadingScreen.startHide();
+        </div>
 
         <h2>✅ Результаты</h2>
         <p>Если все работает правильно, вы должны увидеть:</p>

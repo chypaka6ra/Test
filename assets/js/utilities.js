@@ -175,49 +175,29 @@ window.sendTelegramMessage = function(botToken, chatId, message) {
 
     console.log('[Telegram] Attempting to send message to chat:', chatId);
 
-    // Primary method: Use CORS proxy
-    const corsProxy = 'https://cors-anywhere.herokuapp.com/';
     const apiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-    const proxyUrl = corsProxy + apiUrl;
-
-    const params = new URLSearchParams({
-        chat_id: chatId,
-        text: message,
-        parse_mode: 'HTML'
-    });
 
     console.log('[Telegram] URL:', apiUrl);
     console.log('[Telegram] Message length:', message.length);
 
-    return fetch(proxyUrl, {
+    // Send message directly to Telegram API using JSON method
+    return fetch(apiUrl, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json',
         },
-        body: params.toString(),
-        mode: 'cors'
+        body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+            parse_mode: 'HTML'
+        })
     })
     .then(response => {
         console.log('[Telegram] Response status:', response.status);
         console.log('[Telegram] Response ok:', response.ok);
 
         if (!response.ok) {
-            // Try without CORS proxy if it fails
-            console.warn('[Telegram] CORS proxy failed, trying direct method...');
-            return fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message,
-                    parse_mode: 'HTML'
-                })
-            }).then(res => {
-                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                return res.json();
-            });
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         return response.json();

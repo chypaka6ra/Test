@@ -598,6 +598,7 @@ backface-visibility: hidden;
             visit: '',
             allergy: '',
             drinks: [],
+            hotDishes: [],
             comments: ''
         };
 
@@ -627,15 +628,31 @@ backface-visibility: hidden;
             console.log('[RSVP] Field:', fieldName, '=', value, '(checked:', input.checked, ')');
         });
 
-        // Special handling for drink checkboxes inside t-input-block
-        const drinkCheckboxes = form.querySelectorAll('.t-input-block input[type="checkbox"]:checked');
-        drinkCheckboxes.forEach(function(checkbox) {
-            const value = checkbox.value.trim();
-            if (value && !data.drinks.includes(value)) {
-                data.drinks.push(value);
-                console.log('[RSVP] Drink checkbox:', value);
-            }
-        });
+        // Special handling for drink checkboxes - find drink field and extract its checkboxes
+        const drinkFieldGroup = form.querySelector('[data-field-name="drink"]');
+        if (drinkFieldGroup) {
+            const drinkCheckboxes = drinkFieldGroup.querySelectorAll('input[type="checkbox"]:checked');
+            drinkCheckboxes.forEach(function(checkbox) {
+                const value = checkbox.value.trim();
+                if (value && !data.drinks.includes(value)) {
+                    data.drinks.push(value);
+                    console.log('[RSVP] Drink checkbox:', value);
+                }
+            });
+        }
+
+        // Special handling for hot dish checkboxes - find hotDish field and extract its checkboxes
+        const hotDishFieldGroup = form.querySelector('[data-field-name="hotDish"]');
+        if (hotDishFieldGroup) {
+            const hotDishCheckboxes = hotDishFieldGroup.querySelectorAll('input[type="checkbox"]:checked');
+            hotDishCheckboxes.forEach(function(checkbox) {
+                const value = checkbox.value.trim();
+                if (value && !data.hotDishes.includes(value)) {
+                    data.hotDishes.push(value);
+                    console.log('[RSVP] Hot dish checkbox:', value);
+                }
+            });
+        }
 
         console.log('[RSVP] Extracted data:', data);
 

@@ -221,7 +221,7 @@ window.sendTelegramMessage = function(botToken, chatId, message) {
 
 /**
  * Отправляет данные формы RSVP в Telegram бот
- * @param {Object} formData - Данные формы {name, visit, allergy, drinks, comments}
+ * @param {Object} formData - Данные формы {name, visit, allergy, drinks, hotDishes, comments}
  * @param {string} botToken - Токен Telegram бота
  * @param {string} chatId - ID чата (780759394)
  * @returns {Promise} Промис с результатом отправки
@@ -236,6 +236,10 @@ window.sendRSVPToTelegram = function(formData, botToken, chatId) {
         ? formData.drinks.join(', ')
         : 'Не указано';
 
+    const hotDishesList = formData.hotDishes && formData.hotDishes.length > 0
+        ? formData.hotDishes.join(', ')
+        : 'Не указано';
+
     const message = `
 <b>📋 Новая RSVP заявка:</b>
 
@@ -247,6 +251,9 @@ window.sendRSVPToTelegram = function(formData, botToken, chatId) {
 
 <b>🍷 Предпочтения напитков:</b>
 ${drinksList}
+
+<b>🍖 Предпочтение по горячему:</b>
+${hotDishesList}
     `.trim();
 
     return window.sendTelegramMessage(botToken, chatId, message);

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="1400" height="200" viewBox="0 0 1400 200" xmlns="http://www.w3.org/2000/svg">
+<svg width="1800" height="200" viewBox="0 0 1800 200" xmlns="http://www.w3.org/2000/svg">
 
   <defs>
     <style>
@@ -15,7 +15,7 @@
   </defs>
 
   <text
-    x="700" 
+    x="900" 
     y="120" 
     dominant-baseline="middle"
     text-anchor="middle">
@@ -23,7 +23,7 @@
   </text>
   
     <text
-    x="700" 
+    x="900" 
     y="50" 
     dominant-baseline="middle"
     text-anchor="middle">

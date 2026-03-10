@@ -1,0 +1,438 @@
+/**
+ * Dynamic Layout CSS
+ *
+ * Supports responsive grid system that adapts to viewport width
+ * Works with dynamic-layout.js for seamless repositioning
+ */
+
+:root {
+    /* Default layout values */
+    --current-breakpoint: "md";
+    --layout-name: "tablet";
+    --layout-columns: 2;
+    --layout-gap: 1.25rem;
+    --layout-padding: 1.5rem;
+    --layout-direction: row;
+
+    /* Breakpoint widths */
+    --breakpoint-xs: 0px;
+    --breakpoint-sm: 480px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+}
+
+/* ============================================
+   RESPONSIVE CONTAINER
+   ============================================ */
+
+.t-records,
+.t-container,
+[data-layout] {
+    display: flex;
+    flex-direction: var(--layout-direction);
+    flex-wrap: wrap;
+    gap: var(--layout-gap);
+    padding: var(--layout-padding);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    transition: all 300ms ease-in-out;
+}
+
+/* ============================================
+   RESPONSIVE RECORD/ITEM
+   ============================================ */
+
+.t-rec,
+.t-item,
+[data-breakpoint] {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 300ms ease-in-out;
+}
+
+/* ============================================
+   BREAKPOINT: EXTRA SMALL (< 480px)
+   ============================================ */
+
+@media (max-width: 479px) {
+    :root {
+        --current-breakpoint: "xs";
+        --layout-name: "mobile-single";
+        --layout-columns: 1;
+        --layout-gap: 0.5rem;
+        --layout-padding: 0.75rem;
+        --layout-direction: column;
+    }
+
+    .t-records,
+    .t-container {
+        flex-direction: column;
+        gap: var(--layout-gap);
+        padding: var(--layout-padding);
+    }
+
+    .t-rec,
+    .t-item {
+        width: 100% !important;
+        flex-basis: 100% !important;
+        margin-bottom: var(--layout-gap);
+    }
+
+    /* Full-width on mobile */
+    .grid-item,
+    .col {
+        width: 100% !important;
+    }
+}
+
+/* ============================================
+   BREAKPOINT: SMALL (480px - 767px)
+   ============================================ */
+
+@media (min-width: 480px) and (max-width: 767px) {
+    :root {
+        --current-breakpoint: "sm";
+        --layout-name: "mobile-compact";
+        --layout-columns: 1;
+        --layout-gap: 1rem;
+        --layout-padding: 1rem;
+        --layout-direction: column;
+    }
+
+    .t-records,
+    .t-container {
+        flex-direction: column;
+        gap: var(--layout-gap);
+        padding: var(--layout-padding);
+    }
+
+    .t-rec,
+    .t-item {
+        width: 100% !important;
+        flex-basis: 100% !important;
+    }
+
+    /* Full-width layouts */
+    .grid-item,
+    .col {
+        width: 100% !important;
+    }
+}
+
+/* ============================================
+   BREAKPOINT: MEDIUM (768px - 1023px)
+   ============================================ */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    :root {
+        --current-breakpoint: "md";
+        --layout-name: "tablet";
+        --layout-columns: 2;
+        --layout-gap: 1.25rem;
+        --layout-padding: 1.5rem;
+        --layout-direction: row;
+    }
+
+    .t-records,
+    .t-container {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: var(--layout-gap);
+        padding: var(--layout-padding);
+    }
+
+    .t-rec,
+    .t-item {
+        width: calc(50% - calc(var(--layout-gap) / 2)) !important;
+        flex-basis: calc(50% - calc(var(--layout-gap) / 2)) !important;
+    }
+
+    /* 2-column layout */
+    .col-1 { width: 100% !important; }
+    .col-2 { width: calc(50% - calc(var(--layout-gap) / 2)) !important; }
+    .col-3 { width: calc(50% - calc(var(--layout-gap) / 2)) !important; }
+}
+
+/* ============================================
+   BREAKPOINT: LARGE (1024px - 1279px)
+   ============================================ */
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+    :root {
+        --current-breakpoint: "lg";
+        --layout-name: "desktop";
+        --layout-columns: 3;
+        --layout-gap: 1.5rem;
+        --layout-padding: 2rem;
+        --layout-direction: row;
+    }
+
+    .t-records,
+    .t-container {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: var(--layout-gap);
+        padding: var(--layout-padding);
+    }
+
+    .t-rec,
+    .t-item {
+        width: calc(33.333% - calc(var(--layout-gap) * 2 / 3)) !important;
+        flex-basis: calc(33.333% - calc(var(--layout-gap) * 2 / 3)) !important;
+    }
+
+    /* 3-column layout */
+    .col-1 { width: 100% !important; }
+    .col-2 { width: calc(50% - calc(var(--layout-gap) / 2)) !important; }
+    .col-3 { width: calc(33.333% - calc(var(--layout-gap) * 2 / 3)) !important; }
+    .col-4 { width: calc(33.333% - calc(var(--layout-gap) * 2 / 3)) !important; }
+}
+
+/* ============================================
+   BREAKPOINT: EXTRA LARGE (≥ 1280px)
+   ============================================ */
+
+@media (min-width: 1280px) {
+    :root {
+        --current-breakpoint: "xl";
+        --layout-name: "desktop-wide";
+        --layout-columns: 4;
+        --layout-gap: 2rem;
+        --layout-padding: 2.5rem;
+        --layout-direction: row;
+    }
+
+    .t-records,
+    .t-container {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: var(--layout-gap);
+        padding: var(--layout-padding);
+    }
+
+    .t-rec,
+    .t-item {
+        width: calc(25% - calc(var(--layout-gap) * 3 / 4)) !important;
+        flex-basis: calc(25% - calc(var(--layout-gap) * 3 / 4)) !important;
+    }
+
+    /* 4-column layout */
+    .col-1 { width: 100% !important; }
+    .col-2 { width: calc(50% - calc(var(--layout-gap) / 2)) !important; }
+    .col-3 { width: calc(33.333% - calc(var(--layout-gap) * 2 / 3)) !important; }
+    .col-4 { width: calc(25% - calc(var(--layout-gap) * 3 / 4)) !important; }
+}
+
+/* ============================================
+   DYNAMIC LAYOUT UTILITIES
+   ============================================ */
+
+/* Show/hide based on layout */
+[data-show-on~="mobile-only"] {
+    display: none;
+}
+
+[data-show-on~="tablet-only"] {
+    display: none;
+}
+
+[data-show-on~="desktop-only"] {
+    display: none;
+}
+
+/* Mobile only */
+@media (max-width: 767px) {
+    [data-show-on~="mobile-only"] {
+        display: block !important;
+    }
+
+    [data-hide-on~="mobile"] {
+        display: none !important;
+    }
+}
+
+/* Tablet only */
+@media (min-width: 768px) and (max-width: 1023px) {
+    [data-show-on~="tablet-only"] {
+        display: block !important;
+    }
+
+    [data-hide-on~="tablet"] {
+        display: none !important;
+    }
+}
+
+/* Desktop only */
+@media (min-width: 1024px) {
+    [data-show-on~="desktop-only"] {
+        display: block !important;
+    }
+
+    [data-hide-on~="desktop"] {
+        display: none !important;
+    }
+}
+
+/* ============================================
+   LAYOUT HELPERS
+   ============================================ */
+
+/* Equal width columns */
+.cols-equal > * {
+    flex: 1 1 auto;
+    width: auto;
+}
+
+/* Auto-fill columns */
+.cols-auto > * {
+    flex: 0 1 auto;
+    width: auto;
+}
+
+/* Stretch columns */
+.cols-stretch > * {
+    flex: 1 1 100%;
+}
+
+/* Space between (justify content) */
+.layout-space-between {
+    justify-content: space-between;
+}
+
+.layout-space-around {
+    justify-content: space-around;
+}
+
+.layout-space-evenly {
+    justify-content: space-evenly;
+}
+
+.layout-center {
+    justify-content: center;
+}
+
+.layout-flex-end {
+    justify-content: flex-end;
+}
+
+/* Alignment */
+.layout-align-start {
+    align-items: flex-start;
+}
+
+.layout-align-center {
+    align-items: center;
+}
+
+.layout-align-end {
+    align-items: flex-end;
+}
+
+.layout-align-stretch {
+    align-items: stretch;
+}
+
+/* ============================================
+   ADAPTIVE TEXT
+   ============================================ */
+
+/* Responsive font sizes */
+h1 {
+    font-size: clamp(1.5rem, 5vw, 3.5rem);
+}
+
+h2 {
+    font-size: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+h3 {
+    font-size: clamp(1.1rem, 3vw, 1.8rem);
+}
+
+p {
+    font-size: clamp(0.875rem, 2vw, 1.1rem);
+}
+
+/* ============================================
+   SMOOTH TRANSITIONS
+   ============================================ */
+
+.t-records,
+.t-rec,
+.t-item {
+    transition: all 300ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Disable transitions for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .t-records,
+    .t-rec,
+    .t-item {
+        transition: none;
+    }
+}
+
+/* ============================================
+   ASPECT RATIO MAINTENANCE
+   ============================================ */
+
+/* Maintain aspect ratio for images/videos */
+.aspect-square {
+    aspect-ratio: 1 / 1;
+}
+
+.aspect-video {
+    aspect-ratio: 16 / 9;
+}
+
+.aspect-portrait {
+    aspect-ratio: 3 / 4;
+}
+
+@supports not (aspect-ratio: 1) {
+    .aspect-square::before,
+    .aspect-video::before,
+    .aspect-portrait::before {
+        content: '';
+        display: block;
+        padding-bottom: 100%;
+    }
+}
+
+/* ============================================
+   OVERFLOW HANDLING
+   ============================================ */
+
+.t-container,
+.t-records {
+    overflow-x: hidden;
+    overflow-y: visible;
+}
+
+/* Prevent layout shift */
+.layout-stable {
+    contain: layout;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+    .t-records,
+    .t-container {
+        flex-direction: column;
+        gap: 0;
+        padding: 0;
+    }
+
+    .t-rec,
+    .t-item {
+        width: 100% !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+}

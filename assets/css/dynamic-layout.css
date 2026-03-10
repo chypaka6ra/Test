@@ -1,18 +1,18 @@
 /**
- * Dynamic Layout CSS
+ * Dynamic Layout CSS - Single Column Centered
  *
- * Supports responsive grid system that adapts to viewport width
+ * Supports responsive single-column layout with center alignment
  * Works with dynamic-layout.js for seamless repositioning
  */
 
 :root {
     /* Default layout values */
     --current-breakpoint: "md";
-    --layout-name: "tablet";
-    --layout-columns: 2;
-    --layout-gap: 1.25rem;
+    --layout-name: "tablet-centered";
+    --layout-max-width: 720px;
     --layout-padding: 1.5rem;
-    --layout-direction: row;
+    --layout-margin: 0 auto;
+    --text-align: center;
 
     /* Breakpoint widths */
     --breakpoint-xs: 0px;
@@ -23,25 +23,27 @@
 }
 
 /* ============================================
-   RESPONSIVE CONTAINER
+   RESPONSIVE CONTAINER - SINGLE COLUMN CENTERED
    ============================================ */
 
 .t-records,
 .t-container,
 [data-layout] {
     display: flex;
-    flex-direction: var(--layout-direction);
-    flex-wrap: wrap;
-    gap: var(--layout-gap);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: var(--layout-max-width);
+    margin: var(--layout-margin);
     padding: var(--layout-padding);
     width: 100%;
-    max-width: 100%;
+    text-align: var(--text-align);
     box-sizing: border-box;
     transition: all 300ms ease-in-out;
 }
 
 /* ============================================
-   RESPONSIVE RECORD/ITEM
+   RESPONSIVE RECORD/ITEM - FULL WIDTH
    ============================================ */
 
 .t-rec,
@@ -50,6 +52,7 @@
     display: block;
     width: 100%;
     box-sizing: border-box;
+    text-align: var(--text-align);
     transition: all 300ms ease-in-out;
 }
 
@@ -60,31 +63,24 @@
 @media (max-width: 479px) {
     :root {
         --current-breakpoint: "xs";
-        --layout-name: "mobile-single";
-        --layout-columns: 1;
-        --layout-gap: 0.5rem;
+        --layout-name: "mobile-centered";
+        --layout-max-width: 100%;
         --layout-padding: 0.75rem;
-        --layout-direction: column;
+        --layout-margin: 0 auto;
+        --text-align: center;
     }
 
     .t-records,
     .t-container {
-        flex-direction: column;
-        gap: var(--layout-gap);
-        padding: var(--layout-padding);
+        max-width: 100%;
+        padding: 0.75rem;
+        margin: 0 auto;
     }
 
     .t-rec,
     .t-item {
         width: 100% !important;
-        flex-basis: 100% !important;
-        margin-bottom: var(--layout-gap);
-    }
-
-    /* Full-width on mobile */
-    .grid-item,
-    .col {
-        width: 100% !important;
+        text-align: center;
     }
 }
 
@@ -95,30 +91,24 @@
 @media (min-width: 480px) and (max-width: 767px) {
     :root {
         --current-breakpoint: "sm";
-        --layout-name: "mobile-compact";
-        --layout-columns: 1;
-        --layout-gap: 1rem;
+        --layout-name: "mobile-centered";
+        --layout-max-width: 480px;
         --layout-padding: 1rem;
-        --layout-direction: column;
+        --layout-margin: 0 auto;
+        --text-align: center;
     }
 
     .t-records,
     .t-container {
-        flex-direction: column;
-        gap: var(--layout-gap);
-        padding: var(--layout-padding);
+        max-width: 480px;
+        padding: 1rem;
+        margin: 0 auto;
     }
 
     .t-rec,
     .t-item {
         width: 100% !important;
-        flex-basis: 100% !important;
-    }
-
-    /* Full-width layouts */
-    .grid-item,
-    .col {
-        width: 100% !important;
+        text-align: center;
     }
 }
 
@@ -129,31 +119,25 @@
 @media (min-width: 768px) and (max-width: 1023px) {
     :root {
         --current-breakpoint: "md";
-        --layout-name: "tablet";
-        --layout-columns: 2;
-        --layout-gap: 1.25rem;
+        --layout-name: "tablet-centered";
+        --layout-max-width: 720px;
         --layout-padding: 1.5rem;
-        --layout-direction: row;
+        --layout-margin: 0 auto;
+        --text-align: center;
     }
 
     .t-records,
     .t-container {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: var(--layout-gap);
-        padding: var(--layout-padding);
+        max-width: 720px;
+        padding: 1.5rem;
+        margin: 0 auto;
     }
 
     .t-rec,
     .t-item {
-        width: calc(50% - calc(var(--layout-gap) / 2)) !important;
-        flex-basis: calc(50% - calc(var(--layout-gap) / 2)) !important;
+        width: 100% !important;
+        text-align: center;
     }
-
-    /* 2-column layout */
-    .col-1 { width: 100% !important; }
-    .col-2 { width: calc(50% - calc(var(--layout-gap) / 2)) !important; }
-    .col-3 { width: calc(50% - calc(var(--layout-gap) / 2)) !important; }
 }
 
 /* ============================================
@@ -163,32 +147,25 @@
 @media (min-width: 1024px) and (max-width: 1279px) {
     :root {
         --current-breakpoint: "lg";
-        --layout-name: "desktop";
-        --layout-columns: 3;
-        --layout-gap: 1.5rem;
+        --layout-name: "desktop-centered";
+        --layout-max-width: 900px;
         --layout-padding: 2rem;
-        --layout-direction: row;
+        --layout-margin: 0 auto;
+        --text-align: center;
     }
 
     .t-records,
     .t-container {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: var(--layout-gap);
-        padding: var(--layout-padding);
+        max-width: 900px;
+        padding: 2rem;
+        margin: 0 auto;
     }
 
     .t-rec,
     .t-item {
-        width: calc(33.333% - calc(var(--layout-gap) * 2 / 3)) !important;
-        flex-basis: calc(33.333% - calc(var(--layout-gap) * 2 / 3)) !important;
+        width: 100% !important;
+        text-align: center;
     }
-
-    /* 3-column layout */
-    .col-1 { width: 100% !important; }
-    .col-2 { width: calc(50% - calc(var(--layout-gap) / 2)) !important; }
-    .col-3 { width: calc(33.333% - calc(var(--layout-gap) * 2 / 3)) !important; }
-    .col-4 { width: calc(33.333% - calc(var(--layout-gap) * 2 / 3)) !important; }
 }
 
 /* ============================================
@@ -198,162 +175,143 @@
 @media (min-width: 1280px) {
     :root {
         --current-breakpoint: "xl";
-        --layout-name: "desktop-wide";
-        --layout-columns: 4;
-        --layout-gap: 2rem;
+        --layout-name: "desktop-wide-centered";
+        --layout-max-width: 1000px;
         --layout-padding: 2.5rem;
-        --layout-direction: row;
+        --layout-margin: 0 auto;
+        --text-align: center;
     }
 
     .t-records,
     .t-container {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: var(--layout-gap);
-        padding: var(--layout-padding);
+        max-width: 1000px;
+        padding: 2.5rem;
+        margin: 0 auto;
     }
 
     .t-rec,
     .t-item {
-        width: calc(25% - calc(var(--layout-gap) * 3 / 4)) !important;
-        flex-basis: calc(25% - calc(var(--layout-gap) * 3 / 4)) !important;
-    }
-
-    /* 4-column layout */
-    .col-1 { width: 100% !important; }
-    .col-2 { width: calc(50% - calc(var(--layout-gap) / 2)) !important; }
-    .col-3 { width: calc(33.333% - calc(var(--layout-gap) * 2 / 3)) !important; }
-    .col-4 { width: calc(25% - calc(var(--layout-gap) * 3 / 4)) !important; }
-}
-
-/* ============================================
-   DYNAMIC LAYOUT UTILITIES
-   ============================================ */
-
-/* Show/hide based on layout */
-[data-show-on~="mobile-only"] {
-    display: none;
-}
-
-[data-show-on~="tablet-only"] {
-    display: none;
-}
-
-[data-show-on~="desktop-only"] {
-    display: none;
-}
-
-/* Mobile only */
-@media (max-width: 767px) {
-    [data-show-on~="mobile-only"] {
-        display: block !important;
-    }
-
-    [data-hide-on~="mobile"] {
-        display: none !important;
-    }
-}
-
-/* Tablet only */
-@media (min-width: 768px) and (max-width: 1023px) {
-    [data-show-on~="tablet-only"] {
-        display: block !important;
-    }
-
-    [data-hide-on~="tablet"] {
-        display: none !important;
-    }
-}
-
-/* Desktop only */
-@media (min-width: 1024px) {
-    [data-show-on~="desktop-only"] {
-        display: block !important;
-    }
-
-    [data-hide-on~="desktop"] {
-        display: none !important;
+        width: 100% !important;
+        text-align: center;
     }
 }
 
 /* ============================================
-   LAYOUT HELPERS
+   CENTER ALIGNMENT UTILITIES
    ============================================ */
 
-/* Equal width columns */
-.cols-equal > * {
-    flex: 1 1 auto;
-    width: auto;
+.layout-centered {
+    margin: 0 auto;
+    text-align: center;
+    max-width: 100%;
 }
 
-/* Auto-fill columns */
-.cols-auto > * {
-    flex: 0 1 auto;
-    width: auto;
-}
-
-/* Stretch columns */
-.cols-stretch > * {
-    flex: 1 1 100%;
-}
-
-/* Space between (justify content) */
-.layout-space-between {
-    justify-content: space-between;
-}
-
-.layout-space-around {
-    justify-content: space-around;
-}
-
-.layout-space-evenly {
-    justify-content: space-evenly;
-}
-
-.layout-center {
+.centered-content {
+    display: flex;
     justify-content: center;
-}
-
-.layout-flex-end {
-    justify-content: flex-end;
-}
-
-/* Alignment */
-.layout-align-start {
-    align-items: flex-start;
-}
-
-.layout-align-center {
     align-items: center;
-}
-
-.layout-align-end {
-    align-items: flex-end;
-}
-
-.layout-align-stretch {
-    align-items: stretch;
+    flex-direction: column;
+    text-align: center;
 }
 
 /* ============================================
-   ADAPTIVE TEXT
+   RESPONSIVE TYPOGRAPHY
    ============================================ */
 
-/* Responsive font sizes */
 h1 {
     font-size: clamp(1.5rem, 5vw, 3.5rem);
+    text-align: center;
+    margin: 1rem auto;
+    line-height: 1.3;
 }
 
 h2 {
     font-size: clamp(1.25rem, 4vw, 2.5rem);
+    text-align: center;
+    margin: 0.875rem auto;
+    line-height: 1.4;
 }
 
 h3 {
     font-size: clamp(1.1rem, 3vw, 1.8rem);
+    text-align: center;
+    margin: 0.75rem auto;
+    line-height: 1.5;
 }
 
 p {
     font-size: clamp(0.875rem, 2vw, 1.1rem);
+    text-align: center;
+    line-height: 1.6;
+    margin: 0.5rem auto;
+}
+
+/* ============================================
+   IMAGE & MEDIA CENTERING
+   ============================================ */
+
+img,
+picture,
+video,
+iframe {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 1rem auto;
+}
+
+.image-container,
+.media-container {
+    text-align: center;
+    max-width: 100%;
+}
+
+/* ============================================
+   FORM CENTERING
+   ============================================ */
+
+form,
+.form-container {
+    margin: 1rem auto;
+    max-width: 100%;
+    text-align: center;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="phone"],
+textarea,
+select {
+    display: block;
+    margin: 0.5rem auto;
+    text-align: center;
+}
+
+button,
+input[type="submit"] {
+    display: block;
+    margin: 1rem auto;
+    padding: 0.75rem 2rem;
+}
+
+/* ============================================
+   ASPECT RATIO MAINTENANCE
+   ============================================ */
+
+.aspect-square {
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+}
+
+.aspect-video {
+    aspect-ratio: 16 / 9;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.aspect-portrait {
+    aspect-ratio: 3 / 4;
+    margin: 0 auto;
 }
 
 /* ============================================
@@ -362,7 +320,8 @@ p {
 
 .t-records,
 .t-rec,
-.t-item {
+.t-item,
+.t-container {
     transition: all 300ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
@@ -376,33 +335,6 @@ p {
 }
 
 /* ============================================
-   ASPECT RATIO MAINTENANCE
-   ============================================ */
-
-/* Maintain aspect ratio for images/videos */
-.aspect-square {
-    aspect-ratio: 1 / 1;
-}
-
-.aspect-video {
-    aspect-ratio: 16 / 9;
-}
-
-.aspect-portrait {
-    aspect-ratio: 3 / 4;
-}
-
-@supports not (aspect-ratio: 1) {
-    .aspect-square::before,
-    .aspect-video::before,
-    .aspect-portrait::before {
-        content: '';
-        display: block;
-        padding-bottom: 100%;
-    }
-}
-
-/* ============================================
    OVERFLOW HANDLING
    ============================================ */
 
@@ -412,11 +344,6 @@ p {
     overflow-y: visible;
 }
 
-/* Prevent layout shift */
-.layout-stable {
-    contain: layout;
-}
-
 /* ============================================
    PRINT STYLES
    ============================================ */
@@ -424,9 +351,9 @@ p {
 @media print {
     .t-records,
     .t-container {
-        flex-direction: column;
-        gap: 0;
+        max-width: 100%;
         padding: 0;
+        margin: 0;
     }
 
     .t-rec,
@@ -434,5 +361,40 @@ p {
         width: 100% !important;
         page-break-inside: avoid;
         break-inside: avoid;
+    }
+}
+
+/* ============================================
+   DARK MODE SUPPORT
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    .t-records,
+    .t-container {
+        background-color: transparent;
+    }
+
+    h1, h2, h3, p {
+        color: inherit;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Focus visible for keyboard navigation */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: more) {
+    .t-records,
+    .t-container {
+        border: 1px solid currentColor;
     }
 }

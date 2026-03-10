@@ -1,8 +1,8 @@
 /**
- * Dynamic Layout Manager
+ * Dynamic Layout Manager - Single Column Centered
  *
- * Automatically repositions and resizes elements based on browser viewport width
- * Implements responsive grid system with multiple layout strategies
+ * Automatically adjusts layout based on browser viewport width
+ * Always maintains single column with centered content
  */
 
 (function() {
@@ -20,42 +20,47 @@
                 xl: 1280    // Extra large: 1280px+
             },
 
-            // Layout strategies per breakpoint
+            // Layout strategies per breakpoint (all single column, centered)
             layouts: {
                 xs: {
-                    name: 'mobile-single',
-                    columns: 1,
-                    gap: '0.5rem',
+                    name: 'mobile-centered',
+                    maxWidth: '100%',
                     padding: '0.75rem',
-                    direction: 'column'
+                    margin: '0 auto',
+                    textAlign: 'center',
+                    columns: 1
                 },
                 sm: {
-                    name: 'mobile-compact',
-                    columns: 1,
-                    gap: '1rem',
+                    name: 'mobile-centered',
+                    maxWidth: '480px',
                     padding: '1rem',
-                    direction: 'column'
+                    margin: '0 auto',
+                    textAlign: 'center',
+                    columns: 1
                 },
                 md: {
-                    name: 'tablet',
-                    columns: 2,
-                    gap: '1.25rem',
+                    name: 'tablet-centered',
+                    maxWidth: '720px',
                     padding: '1.5rem',
-                    direction: 'row'
+                    margin: '0 auto',
+                    textAlign: 'center',
+                    columns: 1
                 },
                 lg: {
-                    name: 'desktop',
-                    columns: 3,
-                    gap: '1.5rem',
+                    name: 'desktop-centered',
+                    maxWidth: '900px',
                     padding: '2rem',
-                    direction: 'row'
+                    margin: '0 auto',
+                    textAlign: 'center',
+                    columns: 1
                 },
                 xl: {
-                    name: 'desktop-wide',
-                    columns: 4,
-                    gap: '2rem',
+                    name: 'desktop-wide-centered',
+                    maxWidth: '1000px',
                     padding: '2.5rem',
-                    direction: 'row'
+                    margin: '0 auto',
+                    textAlign: 'center',
+                    columns: 1
                 }
             },
 
@@ -69,8 +74,7 @@
             selectors: {
                 container: '.t-records',
                 record: '.t-rec',
-                grid: '.t-container',
-                content: '.t-content'
+                grid: '.t-container'
             }
         },
 
@@ -93,7 +97,7 @@
          * Initialize dynamic layout system
          */
         init: function() {
-            console.log('[DynamicLayout] Initializing...');
+            console.log('[DynamicLayout] Initializing single-column centered layout...');
 
             // Get initial viewport width
             this.updateViewportWidth();
@@ -210,11 +214,8 @@
             // Update CSS custom properties for responsive design
             this.updateCSSVariables(layout, breakpoint);
 
-            // Apply layout-specific styles
-            this.applyLayoutStyles(layout, breakpoint, immediate);
-
-            // Reflow elements
-            this.reflowElements(layout, breakpoint);
+            // Apply centered single-column layout
+            this.applyCenteredLayout(layout, breakpoint, immediate);
 
             this.state.currentLayout = layout;
         },
@@ -227,16 +228,16 @@
 
             root.style.setProperty('--current-breakpoint', `"${breakpoint}"`);
             root.style.setProperty('--layout-name', `"${layout.name}"`);
-            root.style.setProperty('--layout-columns', layout.columns);
-            root.style.setProperty('--layout-gap', layout.gap);
+            root.style.setProperty('--layout-max-width', layout.maxWidth);
             root.style.setProperty('--layout-padding', layout.padding);
-            root.style.setProperty('--layout-direction', layout.direction);
+            root.style.setProperty('--layout-margin', layout.margin);
+            root.style.setProperty('--text-align', layout.textAlign);
         },
 
         /**
-         * Apply layout-specific CSS styles
+         * Apply centered single-column layout
          */
-        applyLayoutStyles: function(layout, breakpoint, immediate = false) {
+        applyCenteredLayout: function(layout, breakpoint, immediate = false) {
             const container = document.querySelector(this.config.selectors.container);
             if (!container) return;
 
@@ -255,79 +256,29 @@
                 }, this.config.transitionDuration);
             }
 
-            // Apply styles based on layout
-            if (layout.columns === 1) {
-                // Single column layout
-                this.applySingleColumnLayout(container, layout);
-            } else if (layout.columns === 2) {
-                // Two column layout
-                this.applyTwoColumnLayout(container, layout);
-            } else {
-                // Multi-column layout
-                this.applyMultiColumnLayout(container, layout);
-            }
-
-            // Apply padding
-            container.style.padding = layout.padding;
-        },
-
-        /**
-         * Single column layout (mobile)
-         */
-        applySingleColumnLayout: function(container, layout) {
-            const records = container.querySelectorAll(this.config.selectors.record);
-
-            records.forEach((record, index) => {
-                record.style.display = 'block';
-                record.style.width = '100%';
-                record.style.marginBottom = layout.gap;
-                record.style.flexBasis = '100%';
-            });
-
+            // Apply centered single-column styles
             container.style.display = 'flex';
             container.style.flexDirection = 'column';
-            container.style.gap = layout.gap;
-        },
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            container.style.maxWidth = layout.maxWidth;
+            container.style.margin = layout.margin;
+            container.style.padding = layout.padding;
+            container.style.textAlign = layout.textAlign;
+            container.style.width = '100%';
+            container.style.boxSizing = 'border-box';
 
-        /**
-         * Two column layout (tablet)
-         */
-        applyTwoColumnLayout: function(container, layout) {
+            // Apply to all records
             const records = container.querySelectorAll(this.config.selectors.record);
-
-            records.forEach((record, index) => {
+            records.forEach((record) => {
                 record.style.display = 'block';
-                record.style.width = 'calc(50% - ' + (parseFloat(layout.gap) / 2) + 'rem)';
-                record.style.flexBasis = `calc(50% - ${parseFloat(layout.gap) / 2}rem)`;
+                record.style.width = '100%';
+                record.style.boxSizing = 'border-box';
+                record.style.textAlign = layout.textAlign;
             });
 
-            container.style.display = 'flex';
-            container.style.flexDirection = 'row';
-            container.style.flexWrap = 'wrap';
-            container.style.gap = layout.gap;
-            container.style.alignItems = 'flex-start';
-            container.style.alignContent = 'flex-start';
-        },
-
-        /**
-         * Multi-column layout (desktop)
-         */
-        applyMultiColumnLayout: function(container, layout) {
-            const records = container.querySelectorAll(this.config.selectors.record);
-            const cols = layout.columns;
-
-            records.forEach((record, index) => {
-                record.style.display = 'block';
-                record.style.width = `calc(${100 / cols}% - ${(parseFloat(layout.gap) * (cols - 1)) / cols}rem)`;
-                record.style.flexBasis = `calc(${100 / cols}% - ${(parseFloat(layout.gap) * (cols - 1)) / cols}rem)`;
-            });
-
-            container.style.display = 'flex';
-            container.style.flexDirection = 'row';
-            container.style.flexWrap = 'wrap';
-            container.style.gap = layout.gap;
-            container.style.alignItems = 'flex-start';
-            container.style.alignContent = 'flex-start';
+            // Emit custom event
+            this.reflowElements(layout, breakpoint);
         },
 
         /**
@@ -342,7 +293,7 @@
             if (container) {
                 container.setAttribute('data-layout', layout.name);
                 container.setAttribute('data-breakpoint', breakpoint);
-                container.setAttribute('data-columns', layout.columns);
+                container.setAttribute('data-centered', 'true');
             }
 
             // Emit custom event for other scripts
@@ -350,7 +301,9 @@
                 detail: {
                     breakpoint: breakpoint,
                     layout: layout,
-                    width: this.state.windowWidth
+                    width: this.state.windowWidth,
+                    centered: true,
+                    columns: 1
                 }
             });
             window.dispatchEvent(event);
@@ -395,8 +348,10 @@
                 breakpoint: this.state.currentBreakpoint,
                 layout: this.state.currentLayout,
                 viewportWidth: this.state.windowWidth,
-                isTablet: this.state.currentBreakpoint === 'md' || this.state.currentBreakpoint === 'lg',
+                centered: true,
+                columns: 1,
                 isMobile: this.state.currentBreakpoint === 'xs' || this.state.currentBreakpoint === 'sm',
+                isTablet: this.state.currentBreakpoint === 'md' || this.state.currentBreakpoint === 'lg',
                 isDesktop: this.state.currentBreakpoint === 'lg' || this.state.currentBreakpoint === 'xl'
             };
         },
@@ -408,15 +363,6 @@
             console.log('[DynamicLayout] Manual update triggered');
             this.updateViewportWidth();
             this.applyLayout(true);
-        },
-
-        /**
-         * Add custom breakpoint
-         */
-        addBreakpoint: function(name, width, layout) {
-            this.config.breakpoints[name] = width;
-            this.config.layouts[name] = layout;
-            console.log(`[DynamicLayout] Added custom breakpoint: ${name} at ${width}px`);
         }
     };
 

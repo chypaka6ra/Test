@@ -1,0 +1,269 @@
+/**
+ * Optimized Animation Styles for Tilda
+ * Extracted from inline styles for better caching and reusability
+ * Uses CSS custom properties for flexibility
+ */
+
+:root {
+    --animation-duration-fast: 0.5s;
+    --animation-duration-normal: 0.7s;
+    --animation-duration-slow: 1s;
+    --animation-duration-slower: 1.2s;
+    --animation-timing: cubic-bezier(0.19, 1, 0.22, 1);
+    --animation-timing-linear: linear;
+}
+
+/* ============================================
+   ANIMATION FRAMEWORK - CORE CLASSES
+   ============================================ */
+
+.t-animate {
+    opacity: 0;
+    -webkit-transition-property: opacity, transform;
+    transition-property: opacity, transform;
+    -webkit-transition-duration: 1s;
+    transition-duration: 1s;
+    -webkit-transition-timing-function: var(--animation-timing);
+    transition-timing-function: var(--animation-timing);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.t-animate_started {
+    opacity: 1;
+}
+
+/* ============================================
+   FADE IN ANIMATIONS
+   ============================================ */
+
+.t-animate[data-animate-style="fadein"],
+.t-animate[data-animate-style-res-320="fadein"] {
+    opacity: 0;
+    transform: none;
+}
+
+.t-animate_started[data-animate-style="fadein"],
+.t-animate_started[data-animate-style-res-320="fadein"] {
+    opacity: 1;
+}
+
+/* ============================================
+   FADE IN UP (SLIDE UP + FADE)
+   ============================================ */
+
+.t-animate[data-animate-style="fadeinup"],
+.t-animate[data-animate-style-res-320="fadeinup"] {
+    -webkit-transform: translate(0, 100px);
+    transform: translate(0, 100px);
+}
+
+.t-animate_started[data-animate-style="fadeinup"],
+.t-animate_started[data-animate-style-res-320="fadeinup"] {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+}
+
+/* ============================================
+   FADE IN DOWN (SLIDE DOWN + FADE)
+   ============================================ */
+
+.t-animate[data-animate-style="fadeindown"],
+.t-animate[data-animate-style-res-320="fadeindown"] {
+    -webkit-transform: translate(0, -100px);
+    transform: translate(0, -100px);
+}
+
+.t-animate_started[data-animate-style="fadeindown"],
+.t-animate_started[data-animate-style-res-320="fadeindown"] {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+}
+
+/* ============================================
+   FADE IN LEFT (SLIDE LEFT + FADE)
+   ============================================ */
+
+.t-animate[data-animate-style="fadeinleft"],
+.t-animate[data-animate-style-res-320="fadeinleft"] {
+    -webkit-transform: translate(100px, 0);
+    transform: translate(100px, 0);
+}
+
+.t-animate_started[data-animate-style="fadeinleft"],
+.t-animate_started[data-animate-style-res-320="fadeinleft"] {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+}
+
+/* ============================================
+   FADE IN RIGHT (SLIDE RIGHT + FADE)
+   ============================================ */
+
+.t-animate[data-animate-style="fadeinright"],
+.t-animate[data-animate-style-res-320="fadeinright"] {
+    -webkit-transform: translate(-100px, 0);
+    transform: translate(-100px, 0);
+}
+
+.t-animate_started[data-animate-style="fadeinright"],
+.t-animate_started[data-animate-style-res-320="fadeinright"] {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+}
+
+/* ============================================
+   ZOOM IN (SCALE + FADE)
+   ============================================ */
+
+.t-animate[data-animate-style="zoomin"],
+.t-animate[data-animate-style-res-320="zoomin"] {
+    -webkit-transform: scale(0.9);
+    transform: scale(0.9);
+}
+
+.t-animate_started[data-animate-style="zoomin"],
+.t-animate_started[data-animate-style-res-320="zoomin"] {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+
+/* ============================================
+   ZOOM OUT (SCALE + FADE)
+   ============================================ */
+
+.t-animate[data-animate-style="zoomout"],
+.t-animate[data-animate-style-res-320="zoomout"] {
+    -webkit-transform: scale(1.2);
+    transform: scale(1.2);
+}
+
+.t-animate_started[data-animate-style="zoomout"],
+.t-animate_started[data-animate-style-res-320="zoomout"] {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+
+/* ============================================
+   COMPLEX ANIMATIONS - SCALE & DISTANCE
+   ============================================ */
+
+.t-animate_started[data-animate-distance],
+.t-animate_started[data-animate-scale] {
+    -webkit-transform: none !important;
+    transform: none !important;
+}
+
+@media screen and (max-width: 1199px) {
+    #allrecords .t-animate_started[data-animate-distance-res-320],
+    #allrecords .t-animate_started[data-animate-style-res-320="zoomout"] {
+        -webkit-transform: none !important;
+        transform: none !important;
+    }
+}
+
+/* ============================================
+   TEXT ELEMENTS - SPECIFIC TIMING
+   ============================================ */
+
+.t396 .t-title.t-animate {
+    -webkit-transition-duration: 1.2s;
+    transition-duration: 1.2s;
+}
+
+.t396 .t-descr.t-animate,
+.t396 .t-uptitle.t-animate,
+.t396 .t-subtitle.t-animate,
+.t396 .t-text.t-animate {
+    -webkit-transition-duration: 0.7s;
+    transition-duration: 0.7s;
+}
+
+.t396 .t-item.t-animate {
+    -webkit-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+}
+
+/* ============================================
+   SCROLL-BASED ANIMATIONS CONTAINER
+   ============================================ */
+
+.t-animation-sbs__overflow-x {
+    overflow-x: hidden;
+}
+
+/* ============================================
+   INITIAL PAGE LOAD OPTIMIZATION
+   ============================================ */
+
+/* Hide content until CSS is loaded */
+@media screen and (min-width: 980px) {
+    .t-records {
+        opacity: 0;
+    }
+
+    .t-records_animated {
+        -webkit-transition: opacity ease-in-out 0.2s;
+        -moz-transition: opacity ease-in-out 0.2s;
+        -o-transition: opacity ease-in-out 0.2s;
+        transition: opacity ease-in-out 0.2s;
+    }
+
+    .t-records.t-records_visible {
+        opacity: 1;
+    }
+}
+
+/* ============================================
+   RESPONSIVE ANIMATION ADJUSTMENTS
+   ============================================ */
+
+@media screen and (max-width: 1199px) {
+    .t-animate[data-animate-style-res-320="fadein"],
+    .t-animate[data-animate-style-res-320="fadeinup"],
+    .t-animate[data-animate-style-res-320="fadeindown"],
+    .t-animate[data-animate-style-res-320="fadeinleft"],
+    .t-animate[data-animate-style-res-320="fadeinright"],
+    .t-animate[data-animate-style-res-320="zoomin"],
+    .t-animate[data-animate-style-res-320="zoomout"] {
+        opacity: 0;
+        -webkit-transition-property: opacity, transform;
+        transition-property: opacity, transform;
+        -webkit-transition-duration: 1s;
+        transition-duration: 1s;
+        -webkit-transition-timing-function: var(--animation-timing);
+        transition-timing-function: var(--animation-timing);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATION
+   ============================================ */
+
+/* Reduce motion for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .t-animate,
+    .t-records_animated {
+        animation: none !important;
+        transition: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* Use will-change sparingly - only for animated elements */
+.t-animate {
+    will-change: opacity, transform;
+}
+
+.t-animate_started {
+    will-change: auto;
+}

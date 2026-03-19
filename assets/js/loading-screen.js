@@ -79,7 +79,7 @@
         if (numberContainer) {
             numberContainer.style.cursor = 'pointer';
             numberContainer.addEventListener('click', function() {
-                window.open('https://t.me/kasekuchen1337', '_blank');
+                window.open('https://yandex.ru/maps/-/CPREn8Z6', '_blank');
                 console.log('[Loading Screen] Counter clicked, opening Telegram link');
             });
         }
@@ -241,7 +241,7 @@
             telegramBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                window.open('https://t.me/kasekuchen1337', '_blank');
+                window.open('https://yandex.ru/maps/-/CPREn8Z6', '_blank');
                 console.log('[Telegram Button] Clicked, opening Telegram link');
             });
 
@@ -328,7 +328,7 @@
          * Открыть Telegram ссылку вручную
          */
         openTelegramLink: function() {
-            window.open('https://t.me/kasekuchen1337', '_blank');
+            window.open('https://yandex.ru/maps/-/CPREn8Z6', '_blank');
             console.log('[Telegram Button] Telegram link opened manually');
         }
     };
